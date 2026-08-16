@@ -1,0 +1,53 @@
+<!--pages/detailIngredient/detailIngredient.wxml-->
+<scroll-view class="detail-scroll" scroll-y="true">
+  <!-- 页面容器 -->
+  <view class="detail-page">
+    <!-- 顶部图片 -->
+    <view class="detail-image-container">
+      <image src="{{ingredient.ingredientImage}}" mode="aspectFill"></image>
+      <!-- 右上角操作按钮 -->
+      <view class="action-buttons">
+        <view class="action-btn" bindtap="editIngredient">
+          <image src="/images/myicons/edit2.png"></image>
+        </view>
+        <view class="action-btn" bindtap="deleteIngredient">
+          <image src="/images/myicons/delete2.png"></image>
+        </view>
+      </view>
+    </view>
+    <!-- 基础信息 -->
+    <view class="detail-card">
+      <view class="main-title-row">
+        <text class="ingredient-name">{{ingredient.ingredientName}}</text>
+        <view class="category-tag">{{ingredient.ingredientCategory}}</view>
+      </view>
+      <view class="detail-row">
+        <text class="information-item">库存</text>
+        <text class="information-detail">{{ingredient.ingredientCount}}{{ingredient.ingredientUnit}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="information-item">生产日期</text>
+        <text class="information-detail">{{ingredient.ingredientProduceDate}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="information-item">购买日期</text>
+        <text class="information-detail">{{ingredient.ingredientPurchaseDate}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="information-item">保质期</text>
+        <text class="information-detail">{{ingredient.ingredientShelfLife}}天</text>
+      </view>
+      <view class="detail-row">
+        <text class="information-item">保质截至期</text>
+        <text class="information-detail">{{ingredient.ingredientExpireDate}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="information-item">剩余保质期</text>
+        <text class="ingredient-expire {{ingredient.ingredientExpireStatus}}">{{ingredient.ingredientExpireText}}</text>
+      </view>
+    </view>
+  </view>
+</scroll-view>
+
+<!-- 底部导航栏 -->
+<tabBar current="detailIngredient"></tabBar>

@@ -1,0 +1,145 @@
+/*********************************
+ 列表类页面基础
+*********************************/
+.list-page{
+  height:100vh;
+  background:#f7f7f7;
+}
+/*********************************
+ 顶部固定栏
+*********************************/
+.list-top-bar {
+  position:fixed;/*固定*/
+  top:0;
+  left:0;
+  width:100%;
+  height:100rpx;
+
+  display:flex;
+  align-items:center;
+  padding:0 24rpx;
+  gap:50rpx;
+  
+  background:#ff8800;
+  z-index:10;/*控制层级*/
+  box-sizing:border-box;
+  box-shadow:0 4rpx 15rpx rgba(0,0,0,0.08);
+}
+.list-search-box{/* 搜索框 */
+  flex:2;
+  height:70rpx;
+  display:flex;
+  align-items:center;
+  background:#fff;
+  box-shadow:inset 0 0 5rpx rgba(0,0,0,0.3);
+  border-radius:35rpx;
+  padding:0 25rpx;
+}
+.list-search-icon{
+  margin-right:10rpx;
+}
+.list-search-box input{
+  flex:1;
+  font-size:30rpx;
+  color:#333;
+}
+.list-add-button{/* 新增按钮 */
+  flex: 1;
+  height:80rpx;
+  display: flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:35rpx;
+  background:#ff8800;
+  color:white;
+  border:10rpx solid white;
+  font-size:30rpx;
+}
+/*********************************
+ 左右布局
+*********************************/
+.list-container{
+  display:flex;
+  width: 100%;
+  height:100vh;
+  flex-direction:row;
+  /* background: red; */
+
+  padding-top:100rpx;
+
+  box-sizing:border-box;
+}
+/*********************************
+ 左侧分类栏
+*********************************/
+.list-category{
+  width:180rpx;
+  padding-top:10rpx;
+  box-sizing:border-box;
+  background:white;
+}
+.list-category-item{/*条目*/
+  height:100rpx;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28rpx;
+  color:#666;
+}
+.list-category-item.active{
+  background:#fff3e0;
+  color:#ff8800;
+  font-weight:bold;
+  border-left:8rpx solid #ff8800;
+ }
+/*********************************
+ 右侧列表区域
+*********************************/
+.list-content{
+  flex:1;
+  display: flex;
+  flex-direction: column;
+  justify-content:flex-start;/*垂直方向元素自起始位置开始排列*/
+  box-sizing:border-box;
+  padding:20rpx;
+}
+.list-content-item {/*条目*/
+  /* flex: 1; */
+  display: flex;
+  margin-bottom:20rpx;
+  background:white;
+  border-radius:20rpx;
+  box-shadow:0 4rpx 16rpx rgba(0,0,0,0.06);
+  
+  align-items:center;
+  padding:20rpx;
+  gap: 40rpx;
+}
+.list-content-image {/*内容图片*/
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 16rpx;
+  background:#eee;
+
+  align-items: flex-start;
+}
+.list-content-message {/*具体内容*/
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.list-scroll-bottom-space{/*给菜品滑动底部增加高度，避免购物车遮挡*/
+  height:250rpx;
+  flex-shrink:0;/*防止它被 flex 压缩*/
+}
+/*********************************
+ 空数据
+*********************************/
+.list-empty{/*搜索为空*/
+  width:100%;
+  margin-top:280rpx;
+  text-align:center;
+  font-size:30rpx;
+  color:#999;
+}

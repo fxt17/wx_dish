@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "冰箱",
+  "usingComponents": {
+    "tabBar": "/components/tabBar/tabBar",
+    "shoppingCart": "/components/shoppingCart/shoppingCart"
+  }
+}

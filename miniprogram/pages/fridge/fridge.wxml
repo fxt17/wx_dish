@@ -1,0 +1,44 @@
+<view class="list-page">
+  <!-- 顶部固定区域 -->
+  <view class="list-top-bar">
+    <!-- 搜索框 -->
+    <view class="list-search-box">
+      <text class="list-search-icon">🔍</text>
+      <input placeholder="搜索冰箱" value="{{searchText}}" bindinput="searchIngredient"/>
+    </view>
+    <!-- 新增按钮 -->
+    <button class="list-add-button" bindtap="addIngredient">+ 新增食材</button>
+  </view>
+
+  <!-- 内容区域 -->
+  <view class="list-container">
+  <!-- 左侧分类 -->
+    <scroll-view class="list-category" scroll-y="true" enable-flex="true">
+      <view class="list-category-item {{currentIngredientCategory==item?'active':''}}" wx:for="{{ingredientCategories}}" wx:key="index" bindtap="selectCategory"
+      data-category="{{item}}">{{item}}</view>
+    </scroll-view>
+    <!-- 右侧食材 -->
+    <scroll-view class="list-content" scroll-y="true" enable-flex="true">
+      <view class="list-content-item" wx:for="{{showIngredients}}" wx:key="ingredientId" bindtap="openIngredientDetail" data-ingredient-id="{{item.ingredientId}}">
+        <image class="list-content-image" src="{{item.ingredientImage}}" mode="aspectFill"></image>
+        <view class="list-content-message">
+          <!-- 食材名称 -->
+          <text class="ingredient-name">{{item.ingredientName}}</text>
+          <!-- 食材库存 -->
+          <view class="ingredient-count"><text>库存：{{item.ingredientCount}}{{item.ingredientUnit}}</text></view>
+          <!-- 保质期 -->
+          <view class="ingredient-expire {{item.ingredientExpireStatus}}">{{item.ingredientExpireText}}</view>
+        </view>
+      </view>
+      <!-- 给底部购物车留空间 -->
+      <view class="list-scroll-bottom-space"></view>
+      <!-- 搜索无结果提示 -->
+      <view wx:if="{{searchText && showIngredients.length==0}}" class="list-empty">大厨尚未寻得此食材</view>
+    </scroll-view>
+  </view>
+
+  <shoppingCart dishCount="{{orderList.length}}" shortageCount="{{shortageList.length}}" consumeCount="{{consumeList.length}}" shortageList="{{shortageList}}" consumeList="{{consumeList}}" orderList="{{orderList}}" bind:deleteMenu="deleteMenu" bind:deleteDish="deleteDish" bind:submitMenu="submitMenu"/>
+
+  <!-- 底部导航栏 -->
+  <tabBar current="fridge"></tabBar>
+</view>

@@ -1,0 +1,82 @@
+/* pages/detailIngredient/detailIngredient.wxss */
+@import "../../styles/detail.wxss";
+/*主要信息*/
+.main-title-row{/*主标题行*/
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom: 20rpx;
+  /* background: white; */
+}
+
+.ingredient-name{/*菜名*/
+  font-size:42rpx;
+  font-weight:bold;
+}
+.category-tag{/*菜品类别*/
+  background:#fff0e6;
+  color:#ff7a00;
+  padding:8rpx 20rpx;
+  border-radius:30rpx;
+  font-size:32rpx;
+}
+
+.informationItem{
+  /* color:#888; */
+  font-size:30rpx;
+  font-weight: bolder;
+}
+.information-detail{
+  color:#888;
+  font-size:28rpx;
+}
+
+/* 右上角编辑按钮 */
+.action-buttons{
+  position:absolute;
+  right:30rpx;
+  top:40rpx;
+  display:flex;
+  gap:20rpx;
+}
+.action-btn{
+  width:80rpx;
+  height:80rpx;
+  border-radius:50%;
+  /* background:white; */
+  background:rgba(0,0,0,0.55);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:36rpx;
+  box-shadow:0 4rpx 12rpx rgba(0,0,0,0.2);
+}
+.action-btn image{
+  width:50rpx;
+  height:50rpx;
+}
+
+/* 保质期 */
+.ingredient-expire{
+  /* margin-top:10rpx; */
+  padding:6rpx 18rpx;
+  border-radius:20rpx;
+  font-size:28rpx;
+  display:inline-block;
+  /* justify-content: center; */
+}
+/* 正常 */
+.expire-normal{
+  background:#e8f5e9;
+  color:#2e7d32;
+}
+/* 临期 */
+.expire-warning{
+  background:#fff3cd;
+  color:#856404;
+}
+/* 过期 */
+.expire-danger{
+  background:#f8d7da;
+  color:#842029;
+}

@@ -1,0 +1,11 @@
+<view class="tab-bar">
+  <view class="tab-item" bindtap="goMenu">
+    <image class="tab-item-icon" src="{{current=='menu'?'/images/myicons/menu_clicked.png':'/images/myicons/menu_unclicked.png'}}"></image><text class="tab-item-text">点菜</text>
+  </view>
+  <view class="tab-item" bindtap="goFridge">
+    <image class="tab-item-icon" src="{{current=='fridge'?'/images/myicons/fridge_clicked.png':'/images/myicons/fridge_unclicked.png'}}"></image><text class="tab-item-text">冰箱</text>
+  </view>
+  <view class="tab-item" bindtap="goMine">
+    <image class="tab-item-icon" src="{{current=='mine'?'/images/myicons/mine_clicked.png':'/images/myicons/mine_unclicked.png'}}"></image><text class="tab-item-text">我的</text>
+  </view>
+</view>

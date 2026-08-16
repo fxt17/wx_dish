@@ -1,0 +1,51 @@
+<view class="list-page">
+  <!-- 顶部固定区域 -->
+  <view class="list-top-bar">
+    <!-- 搜索框 -->
+    <view class="list-search-box">
+      <text class="list-search-icon">🔍</text>
+      <input placeholder="搜索菜品" value="{{searchText}}" bindinput="searchDish"/>
+    </view>
+    <!-- 新增按钮 -->
+    <button class="list-add-button" bindtap="addDish">+ 新增菜谱</button>
+  </view>
+
+  <!-- 内容区域 -->
+  <view class="list-container">
+    <!-- 左侧分类 -->
+    <scroll-view class="list-category" scroll-y="true" enable-flex="true">
+      <view class="list-category-item {{currentDishCategory==item?'active':''}}" wx:for="{{dishCategories}}" wx:key="index" bindtap="selectCategory"
+      data-category="{{item}}">{{item}}</view>
+    </scroll-view>
+    <!-- 右侧菜品 -->
+    <scroll-view class="list-content" scroll-y="true" enable-flex="true">
+      <view class="list-content-item" wx:for="{{showDishes}}" wx:key="dishId" bindtap="openDetail" data-dish-id="{{item.dishId}}">
+        <image class="list-content-image" src="{{item.dishImage}}" mode="aspectFill"></image>
+        <view class="list-content-message">
+          <!-- 菜名 -->
+          <text class="dish-name">{{item.dishName}}</text>
+          <!-- 评价 -->
+          <view class="dish-rating">
+            <text>⭐ {{item.starRating}}</text>
+          </view>
+          <!-- 销量 -->
+          <text class="dish-sales">已点 {{item.dishOrderCount}} 份</text>
+        </view>
+        <!-- 数量控制 -->
+        <view class="dish-counter">
+          <counter dish-id="{{item.dishId}}" dish-count="{{item.dishCount}}" bind:plus="selectDish" bind:minus="cancelDish"/>
+        </view>
+      </view>
+      <!-- 给底部购物车留空间 -->
+      <view class="list-scroll-bottom-space"></view>
+      <!-- 搜索无结果提示 -->
+      <view wx:if="{{searchText && showDishes.length==0}}" class="list-empty">大厨尚未习得此技能</view>
+    </scroll-view>
+  </view>
+
+  <!-- 购物车 -->
+  <cart dishes="{{dishes}}" totalCount="{{totalCount}}" bind:selectDish="selectDish" bind:cancelDish="cancelDish" bind:clearCart="clearCart" bind:submitOrder="submitOrder"/>
+
+  <!-- 底部导航栏 -->
+  <tabBar current="menu"></tabBar>
+</view>

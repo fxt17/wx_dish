@@ -1,0 +1,24 @@
+@import "../../styles/listView.wxss";
+/*==============================================*/
+/* 菜品名称 */
+.dish-name {
+  font-size: 30rpx;
+  font-weight:bold;
+  color: #333;
+  margin-bottom: 10rpx;
+  /* align-self: flex-end; */
+}
+.dish-rating{
+  font-size:26rpx;
+  color:#ff9800;
+  margin-bottom:8rpx;
+}
+.dish-sales{
+  font-size:26rpx;
+  color:#999;
+}
+.dish-counter{
+  width:120rpx;
+  display:flex;
+  justify-content:flex-end;
+}

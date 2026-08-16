@@ -1,0 +1,60 @@
+@import "../../styles/listView.wxss";
+/*==============================================*/
+/* 菜品名称 */
+.ingredient-name {
+  font-size: 30rpx;
+  color: #333;
+  font-weight:bold;
+  margin-bottom: 10rpx;
+  /* align-self: flex-end; */
+}
+/* 库存 */
+.ingredient-count {
+  display: flex;
+  flex-direction: row;
+  align-self: flex-end;
+  justify-content: center;
+  margin-bottom: 8rpx;
+}
+/* 保质期 */
+.ingredient-expire{
+  /* margin-top:10rpx; */
+  padding:6rpx 18rpx;
+  border-radius:20rpx;
+  font-size:24rpx;
+  display:inline-block;
+  /* justify-content: center; */
+}
+/* 正常 */
+.expire-normal{
+  background:#e8f5e9;
+  color:#2e7d32;
+}
+/* 临期 */
+.expire-warning{
+  background:#fff3cd;
+  color:#856404;
+}
+/* 过期 */
+.expire-danger{
+  background:#f8d7da;
+  color:#842029;
+}
+
+/* 底部购物车 */
+.shortage-btn{
+  position:fixed;
+  left:20rpx;
+  right:20rpx;
+  bottom:150rpx;
+  height:120rpx;
+
+  padding: 0 20rpx;
+  background: white;
+  border-radius:60rpx;
+  display:flex;
+  align-items:center;
+  box-shadow:0 8rpx 30rpx rgba(0,0,0,0.15);
+  z-index:13;
+  box-sizing:border-box;
+}

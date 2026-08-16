@@ -1,0 +1,74 @@
+<scroll-view class="detail-scroll" scroll-y="true">
+  <!-- 页面容器 -->
+  <view class="detail-page">
+    <!-- 顶部图片 -->
+    <view class="detail-image-container">
+      <image src="{{dish.dishImage}}" mode="aspectFill"></image>
+      <!-- 右上角操作按钮 -->
+      <view class="action-buttons">
+        <view class="action-btn" bindtap="editDish">
+          <image src="/images/myicons/edit2.png"></image>
+        </view>
+        <view class="action-btn" bindtap="deleteDish">
+          <image src="/images/myicons/delete2.png"></image>
+        </view>
+      </view>
+      <!-- 右下角喜欢按钮 -->
+      <view class="evaluate-buttons" wx:if="{{dish.canEvaluate}}">
+        <view class="evaluate-btn" bindtap="likeDish">
+          <image src="/images/myicons/good.png"></image>
+        </view>
+        <view class="evaluate-btn" bindtap="dislikeDish">
+          <image src="/images/myicons/bad.png"></image>
+        </view>
+      </view>
+      <!-- 左下角评分 -->
+      <view class="dish-score">
+        <image src="/images/myicons/star.png"></image>
+        <text class="rate">好评率{{dish.dishRating}}%</text>
+      </view>
+    </view>
+    <!-- 基础信息 -->
+    <view class="detail-card">
+      <view class="main-title-row">
+        <text class="dish-name">{{dish.dishName}}</text>
+        <view class="category-tag">{{dish.dishCategory}}</view>
+      </view>
+      <view class="description" wx:if="{{dish.dishDescription}}">{{dish.dishDescription}}</view>
+      <!-- 数量控制 -->
+      <view class="counter-area">
+        <counter dish-id="{{dish.dishId}}" dish-count="{{dish.dishCount}}" bind:plus="selectDish" bind:minus="cancelDish"/>
+      </view>
+    </view>
+
+    <!-- 食材 -->
+    <view class="detail-card">
+      <view class="detail-title">
+        <image src="/images/myicons/ingredient.png"></image>
+        <text>所需食材</text>
+      </view>
+      <view class="detail-row" wx:for="{{dish.dishIngredients}}" wx:key="index">
+        <text>{{item.name}}</text>
+        <text class="amount">{{item.amount}}</text>
+      </view>
+    </view>
+
+    <!-- 烹饪步骤 -->
+    <view class="detail-card">
+      <view class="detail-title">
+        <image src="/images/myicons/cooking2.png"></image>
+        <text>烹饪步骤</text>
+       </view>
+      <view class="detail-row" wx:for="{{dish.dishCookingSteps}}" wx:key="index">
+        <view class="step-number">{{index+1}}</view>
+        <text class="step-text">{{item}}</text>
+      </view>
+    </view>
+  </view>
+</scroll-view>
+
+<!-- 购物车 -->
+<cart dishes="{{dishes}}" totalCount="{{totalCount}}" bind:selectDish="selectDish" bind:cancelDish="cancelDish" bind:clearCart="clearCart" bind:submitOrder="submitOrder"/>
+
+<!-- 底部导航栏 -->
+<tabBar current="detail"></tabBar>

@@ -1,0 +1,214 @@
+/* components/shoppingCart/shoppingCart.wxss */
+/* 底部缺料提醒(购物车) */
+.cart-bar{
+  position:fixed;
+  left:20rpx;
+  right:20rpx;
+  bottom:150rpx;
+  height:120rpx;
+
+  padding: 0 20rpx;
+  background: white;
+  border-radius:60rpx;
+  display:flex;
+  align-items:center;
+  box-shadow:0 8rpx 30rpx rgba(0,0,0,0.15);
+  z-index:13;
+  box-sizing:border-box;
+}
+/* 左侧 */
+.cart-summary{
+  flex:1;
+  display:flex;
+  align-items:center;
+  padding-left:30rpx;
+}
+.cart-icon{
+  position:relative;
+  font-size:50rpx;
+}
+/*数量角标*/
+.shortage-badge{
+  position:absolute;
+  right:-15rpx;
+  top:-15rpx;
+  width:40rpx;
+  height:40rpx;
+  background:#ff4f4f;
+  color:white;
+  border-radius:50%;
+  font-size:24rpx;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.consume-badge{
+  position:absolute;
+  right:-15rpx;
+  top:-15rpx;
+  width:40rpx;
+  height:40rpx;
+  background:#4fcc4f;
+  color:white;
+  border-radius:50%;
+  font-size:24rpx;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+/*提示词*/
+.cart-text{
+  margin-left:30rpx;
+  font-size:30rpx;
+  color:#333;
+  /* font-weight:bold; */
+}
+/* 菜单按钮 */
+.menu-btn{
+  width:220rpx;
+  height:80rpx;
+  display: flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:40rpx;
+  background:#ff8800;
+  color:white;
+  font-size:30rpx;
+}
+/* 最终确认菜单按钮 */
+.submit{
+  background:#43a047;
+}
+/* 遮罩 */
+.mask{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.45);
+  z-index:11;
+}
+/* 弹出的购物车 */
+.cart-panel{
+  position:fixed;
+  left:20rpx;
+  right:20rpx;
+  bottom:285rpx;
+  max-height:50vh;
+
+  background:white;
+  border-radius:30rpx;
+  padding:50rpx;
+  overflow-y:auto;
+  z-index:12;
+  box-shadow:0 5rpx 20rpx rgba(0,0,0,0.15);
+  box-sizing:border-box;
+  
+  display:flex;
+  flex-direction:column;
+}
+/* 标题 */
+.panel-title{
+  display:flex;
+  height: 80rpx;
+  flex-shrink:0;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20rpx;
+  box-sizing:border-box;
+
+  font-size:34rpx;
+  font-weight:bold;
+  color:#333;
+  /* background: #ff4d4f; */
+}
+.clear{
+  padding:8rpx 20rpx;
+  background:#ffe4e2;
+  color:#ff4d4f;
+  border-radius:30rpx;
+  font-size:26rpx;
+}
+.cart-list{
+  flex:1;
+  max-height:calc(50vh - 200rpx);/*弹窗(50vh)-padding(50*2rpx)-panel-title(80rpx)-margin-bottom(20rpx)*/
+  /* background: blue; */
+}
+/* 食材条目 */
+.shortage-ingredient-item{
+  height:60rpx;
+  flex-shrink:0;/*不允许被压缩*/
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom: 10rpx;
+  padding: 10rpx 30rpx;
+  border-radius: 20rpx;
+  background:#ffe5b6;
+}
+.shortage-ingredient-name{
+  font-size:30rpx;
+  color:#333;
+  font-weight:bold;
+}
+.shortage-ingredient-count{
+  font-size:28rpx;
+  color:#ff8800;
+  font-weight:bold;
+}
+.consume-ingredient-item{
+  height:60rpx;
+  flex-shrink:0;/*不允许被压缩*/
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom: 10rpx;
+  padding: 10rpx 30rpx;
+  border-radius: 20rpx;
+  background:#a6ffac;
+}
+.consume-ingredient-name{
+  font-size:30rpx;
+  color:#333;
+  font-weight:bold;
+}
+.consume-ingredient-count{
+  font-size:28rpx;
+  color:#339933;
+  font-weight:bold;
+}
+.dish-item{
+  display:flex;
+  align-items:center;
+  margin-bottom: 10rpx;
+  border-bottom:1rpx solid #eee;
+}
+.dish-item:last-child{
+  border-bottom:none;
+}
+.dish-image{
+  width:150rpx;
+  height:150rpx;
+  border-radius:15rpx;
+  background:#f5f5f5;
+}
+.dish-info{
+  flex:1;
+  margin-left:20rpx;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.dish-name{
+  font-size:30rpx;
+  font-weight:bold;
+}
+.dish-delete-btn{
+  width:80rpx;
+  padding:8rpx 20rpx;
+  background:#ffe4e2;
+  color:#ff4d4f;
+  border-radius:30rpx;
+  font-size:26rpx;
+}

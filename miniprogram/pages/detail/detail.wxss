@@ -1,0 +1,125 @@
+@import "../../styles/detail.wxss";
+/*主要信息*/
+.main-title-row{/*主标题行*/
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom: 20rpx;
+  /* background: white; */
+}
+
+.dish-name{/*菜名*/
+  font-size:42rpx;
+  font-weight:bold;
+}
+.category-tag{/*菜品类别*/
+  background:#fff0e6;
+  color:#ff7a00;
+  padding:8rpx 20rpx;
+  border-radius:30rpx;
+  font-size:32rpx;
+}
+.description{/*菜品描述*/
+  padding: 20rpx;
+  font-size:28rpx;
+  line-height:45rpx;
+  color:#666;
+  /* background: white; */
+}
+.counter-area{/*菜品选择*/
+  display:flex;
+  justify-content:flex-end;
+  /* background: white; */
+}
+
+/*所需食材*/
+.amount{
+  color:#888;
+}
+
+/*烹饪步骤*/
+.step-number{
+  width:50rpx;
+  height:50rpx;
+  background:#ff8c00;
+  color:white;
+  border-radius:50%;
+  text-align:center;
+  line-height:50rpx;
+  margin-right:20rpx;
+}
+.step-text{
+  flex:1;
+  line-height:50rpx;
+}
+
+/* 右上角编辑按钮 */
+.action-buttons{
+  position:absolute;
+  right:30rpx;
+  top:40rpx;
+  display:flex;
+  gap:20rpx;
+}
+.action-btn{
+  width:80rpx;
+  height:80rpx;
+  border-radius:50%;
+  /* background:white; */
+  background:rgba(0,0,0,0.55);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:36rpx;
+  box-shadow:0 4rpx 12rpx rgba(0,0,0,0.2);
+}
+.action-btn image{
+  width:50rpx;
+  height:50rpx;
+}
+/* 左下角评分 */
+.dish-score{
+  position:absolute;
+  left:30rpx;
+  bottom:20rpx;
+  background:rgba(0,0,0,0.55);
+  padding:10rpx 20rpx;
+  border-radius:30rpx;
+  color:white;
+  font-size:24rpx;
+  /* font-weight: bolder; */
+  display:flex;
+  align-items:center;
+  gap:10rpx;
+}
+.dish-score image{
+  width:40rpx;
+  height:40rpx;
+  padding: 5rpx;
+}
+.rate{
+  margin-left:10rpx;
+}
+/* 右下角评价按钮 */
+.evaluate-buttons{
+  position:absolute;
+  right:30rpx;
+  bottom:20rpx;
+  display:flex;
+  gap:20rpx;
+}
+.evaluate-btn{
+  width:80rpx;
+  height:80rpx;
+  border-radius:50%;
+  /* background:white; */
+  background:rgba(255, 255, 255, 0.55);
+  box-shadow:0 5rpx 15rpx rgba(0,0,0,0.2);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.evaluate-btn image{
+  width:50rpx;
+  height:50rpx;
+}

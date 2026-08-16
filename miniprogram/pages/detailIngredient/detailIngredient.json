@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "食材",
+  "usingComponents": {
+    "tabBar": "/components/tabBar/tabBar"
+  }
+}

@@ -1,0 +1,63 @@
+/* 信息/细节类页面基础 */
+.detail-scroll{/*滚动控制*/
+  height:calc(100vh - 150rpx);/*滚动高度包含150底部导航栏*/
+}
+.detail-page{
+  padding-bottom:120rpx;/*页面底部增高120,避免购物车遮挡*/
+  background:#f6f7f8;
+}
+/****************
+ 图片区域
+****************/
+.detail-image-container{
+  position:relative;
+  width:100%;
+  height:500rpx;
+  background:#eee;
+  overflow:hidden;/*隐藏超出父元素边界的内容，不显示出来*/
+}
+.detail-image-container image{
+  width:100%;
+  height:100%;
+}
+/****************
+ 信息卡片
+****************/
+.detail-card{/*信息卡*/
+  background:rgb(225, 225, 225, 0.55);
+  /* background:rgba(245, 245, 245, 0.55); */
+  border-radius:24rpx;
+  padding:25rpx;
+  margin:20rpx;
+
+  display: flex;
+  flex-direction:column;
+  gap: 20rpx;
+  box-sizing:border-box;
+}
+.detail-title{/*标题*/
+  flex: 1;
+  min-height:80rpx;
+  display:flex;
+  align-items:center;
+  justify-content:self-start;
+  font-size:38rpx;
+  font-weight:bold;
+  margin-bottom: 20rpx;
+  /* background: white; */
+}
+.detail-title image{/*标题*/
+  width:80rpx;
+  height:80rpx;
+  margin-right: 20rpx;
+  align-items:center;
+  justify-content:self-start;
+}
+.detail-row{/*普通文本行*/
+  display:flex;
+  min-height: 50rpx;
+  align-items:center;
+  justify-content:space-between;
+  padding:5rpx 0;
+  /* background: white; */
+}

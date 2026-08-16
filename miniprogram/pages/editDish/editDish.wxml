@@ -1,0 +1,72 @@
+<view class="edit-page">
+  <!-- 图片区域 -->
+  <view class="edit-image-card">
+    <image class="edit-image" src="{{dish.dishImage}}" mode="aspectFill"></image>
+    <button class="edit-image-btn" bindtap="change_dishImage">上传图片</button>
+  </view>
+
+
+  <!-- 基础信息 -->
+  <view class="edit-card">
+    <view class="edit-title">基础信息</view>
+    <!-- 菜名 -->
+    <view class="edit-row">
+      <text class="edit-label">菜名</text>
+      <view class="edit-label-right">
+        <input class="edit-input" placeholder="请输入食材名称" placeholder-class="edit-placeholder" value="{{dish.dishName}}" bindinput="change_dishName"/>
+      </view>
+    </view>
+    <!-- 菜品描述 -->
+    <view class="edit-row">
+      <text class="edit-label edit-textarea-label">描述</text>
+      <view class="edit-label-right edit-textarea-right">
+        <textarea class="edit-textarea" placeholder="请输入菜品介绍，例如口味、特色..." placeholder-class="edit-placeholder" value="{{dish.dishDescription}}" bindinput="change_dishDescription"></textarea>
+      </view>
+    </view>
+    <!-- 菜品分类 -->
+    <view class="edit-row">
+      <text class="edit-label">分类</text>
+      <view class="edit-label-right">
+        <picker mode="selector" range="{{dishCategories}}" bindchange="change_dishCategory">
+          <view class="edit-picker {{dish.dishCategory?'':'edit-placeholder'}}">
+            {{dish.dishCategory || "请选择类别"}}
+            <text class="edit-picker-arrow">▼</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+  </view>
+
+
+  <!-- 食材 -->
+  <view class="edit-card">
+    <view class="edit-title">所需食材</view>
+    <view class="edit-row" wx:for="{{dish.dishIngredients}}" wx:key="index">
+      <input class="edit-input" placeholder="请输入食材名称" placeholder-class="edit-placeholder" value="{{item.name}}" data-index="{{index}}" bindinput="change_dishIngredientName"/>
+      <input class="edit-input" placeholder="请输入食材数量" placeholder-class="edit-placeholder" value="{{item.amount}}" data-index="{{index}}" bindinput="change_dishIngredientAmount"/>
+      <view class="delete-wrapper">
+        <button class="delete" data-index="{{index}}" bindtap="delete_dishIngredient">×</button>
+      </view>
+    </view>
+    <button class="edit-btn" bindtap="add_dishIngredient">+ 添加食材</button>
+  </view>
+
+
+  <!-- 烹饪流程 -->
+  <view class="edit-card">
+    <view class="edit-title">烹饪流程</view>
+    <view class="edit-row" wx:for="{{dish.dishCookingSteps}}" wx:key="index">
+        <view class="step-number">{{index+1}}</view>
+        <textarea class="edit-textarea" value="{{item}}" data-index="{{index}}" bindinput="change_dishStep"/>
+        <view class="delete-wrapper">
+          <button class="delete" data-index="{{index}}" bindtap="delete_dishStep">×</button>
+        </view>
+    </view>
+    <button class="edit-btn" bindtap="add_dishStep">+ 添加步骤</button>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="edit-bottom">
+    <button class="edit-save-btn" bindtap="saveDish">保存修改</button>
+  </view>
+</view>

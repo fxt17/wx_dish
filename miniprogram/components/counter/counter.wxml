@@ -1,0 +1,10 @@
+<!--components/counter/counter.wxml-->
+<view class="counter">
+  <view class="counter-button-minus" wx:if="{{dishCount}}" catchtap="minus">
+    <image class="counter-button-icon" src="/images/myicons/minus.png"></image>
+  </view>
+  <text class="counter-text" wx:if="{{dishCount}}">{{dishCount}}</text>
+  <view class="counter-button-plus" catchtap="plus">
+    <image class="counter-button-icon" src="/images/myicons/plus.png"></image>
+  </view>
+</view>

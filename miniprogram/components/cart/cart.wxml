@@ -1,0 +1,34 @@
+<!--components/cart/cart.wxml-->
+<!-- 提交 -->
+<view class="cart-bar" wx:if="{{totalCount>0}}">
+  <view class="cart-summary" bindtap="showCart">
+    <view class="cart-icon">
+      🛒<view class="badge">{{totalCount}}</view>
+    </view>
+    <view class="cart-text">已选 {{totalCount}} 份菜品</view>
+  </view>
+  <!-- 提交按钮 -->
+  <button class="submit-btn" bindtap="submitOrder">提交菜单</button>
+</view>
+<!-- 遮罩 -->
+<view class="mask" wx:if="{{cartVisible}}" bindtap="showCart"></view>
+<!-- 购物车列表 -->
+<view class="cart-panel" wx:if="{{cartVisible}}">
+  <view class="panel-title">
+    <text>已选菜品</text>
+    <text class="clear" bindtap="clearCart">清空</text>
+  </view>
+  
+  <scroll-view class="cart-list" scroll-y="true">
+    <view wx:for="{{dishes}}" wx:key="dishId">
+      <view class="dish-item" wx:if="{{item.dishCount>0}}">
+        <image class="dish-image" src="{{item.dishImage}}" mode="aspectFill"></image>
+        <view class="dish-info">
+          <text class="dish-name">{{item.dishName}}</text>
+          <counter dishId="{{item.dishId}}" dishCount="{{item.dishCount}}" bind:plus="selectDish" bind:minus="cancelDish"/>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+</view>

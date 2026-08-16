@@ -1,0 +1,198 @@
+/* 编辑类页面基础 */
+.edit-page{
+  padding:20rpx;
+  padding-bottom:140rpx;
+  background:#f6f7f8;
+}
+/****************
+ 图片区域
+****************/
+.edit-image-card{/* 图片卡片 */
+  background:rgb(225, 225, 225);
+  border-radius:24rpx;
+  overflow:hidden;
+  padding:25rpx;
+  margin-bottom:25rpx;
+  /* box-shadow:0 0rpx 10rpx rgba(50, 50, 50, 0.9); */
+}
+.edit-image{
+  width:100%;
+  height:500rpx;
+  border-radius:24rpx;
+  background:#eee;
+}
+.edit-image-btn{
+  margin-top:20rpx;
+  background:#07c160;
+  color:white;
+  border-radius:40rpx;
+  font-size:30rpx;
+}
+/****************
+ 信息卡片
+****************/
+.edit-card{
+  background:rgb(225, 225, 225);
+  border-radius:24rpx;
+  padding:25rpx;
+  margin-bottom:25rpx;
+  display: flex;
+  flex-direction:column;
+  gap: 10rpx;
+  box-sizing:border-box;
+  /* box-shadow:0 0rpx 10rpx rgba(50, 50, 50, 0.9); */
+}
+/* 普通输入行 */
+.edit-row{
+  display:flex;
+  align-items:center;
+  min-height:100rpx;
+  box-sizing:border-box;
+  padding: 10rpx;
+  gap: 20rpx;
+}
+.edit-title{
+  flex: 1;
+  height:80rpx;
+  display:flex;
+  align-items:self-start;
+  justify-content:self-start;
+  font-size:40rpx;
+  font-weight:bold;
+  color: #07c160;
+}
+.edit-label{
+  width:150rpx;
+  height:80rpx;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#e8f8ef;
+  color:#07c160;
+  border-radius:15rpx;
+  font-size:30rpx;
+  font-weight:bold;
+  box-sizing:border-box;
+}
+.edit-textarea-label{
+  height:160rpx;
+}
+.edit-label-right{
+  flex:1;
+  height:80rpx;
+  border-radius:15rpx;
+  color:#333;
+  font-size:30rpx;
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.edit-textarea-right{
+  height:160rpx;  
+}
+.edit-input{
+  /* width:100%; */
+  flex: 1;
+  height:80rpx;
+  padding:0 10rpx;
+  background:white;
+  border-radius:15rpx;
+  color:#333;
+  font-size:30rpx;
+  box-sizing:border-box;
+}
+.edit-input-right{
+  margin-left:15rpx;
+  color:#000000;
+}
+.edit-textarea{
+  flex: 1;
+  width:0;/*不使用textarea默认的宽度*/
+  height:160rpx;
+  padding:20rpx 10rpx;
+  margin: 0;
+  background:white;
+  border-radius:15rpx;
+  color:#333;
+  font-size:30rpx;
+  box-sizing:border-box;
+  align-items:center;
+  justify-content:center;
+}
+/* picker */
+.edit-picker{
+  width:100%;
+  height:80rpx;
+  padding:0 10rpx;
+  display:flex;
+  align-items:center;
+  /* background:rgb(150, 204, 145); */
+  background:white;
+  border-radius:15rpx;
+  color:#333;
+  font-size:30rpx;
+  box-sizing:border-box;
+}
+/* 未选择时的提示颜色 */
+.edit-placeholder{
+  color:#999;
+}
+/* 下拉箭头 */
+.edit-picker-arrow{
+  font-size:28rpx;
+  color:#07c160;
+  margin-left:auto;   /* 强制靠右 */
+}
+/* picker内部 */
+.edit-label-right picker{
+  width:100%;
+}
+
+/* 添加按钮 */
+.edit-add-btn{
+  margin-top:20rpx;
+  background:#fff7e6;
+  color:#fa8c16;
+  border-radius:40rpx;
+}
+/* 删除按钮 */
+.edit-delete-btn{
+  color:#ff4d4f;
+}
+/* 底部固定保存 */
+.edit-bottom{
+  position:fixed;
+  left:20rpx;
+  right:20rpx;
+  bottom:0;
+  height:120rpx;
+  margin-bottom:25rpx;/*外边距,这个元素的底部增加 25rpx 的外部空白*/
+  padding:25rpx;
+  border-radius:24rpx;
+  display:flex;
+  gap:20rpx;
+  background:rgb(225, 225, 225,0.8);
+  box-shadow:0 0rpx 20rpx rgba(50, 50, 50, 0.9);
+  z-index:100;
+  box-sizing:border-box;
+}
+.edit-scan-btn{
+  flex:1;
+  background:white;
+  color:#07c160;
+  border:1px solid #07c160;
+  border-radius:40rpx;
+}
+.edit-save-btn{
+  flex:1;
+  background:#07c160;
+  color:white;
+  border-radius:40rpx;
+}
+
+.edit-btn{
+  background:#07c160;
+  color:white;
+  border-radius:40rpx;
+}

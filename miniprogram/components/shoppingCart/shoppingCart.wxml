@@ -1,0 +1,76 @@
+<!--components/shoppingCart/shoppingCart.wxml-->
+<!-- 提交 -->
+<view class="cart-bar" wx:if="{{dishCount>0}}">
+  <view class="cart-summary" bindtap="showIngredients">
+    <view class="cart-icon" wx:if="{{shortageCount}}">
+      🛒<view class="shortage-badge">{{shortageCount}}</view>
+    </view>
+    <view class="cart-icon" wx:if="{{!shortageCount}}">
+      🛒<view class="consume-badge">{{consumeCount}}</view>
+    </view>
+    <view class="cart-text" wx:if="{{shortageCount}}">缺少 {{shortageCount}} 样食材</view>
+    <view class="cart-text" wx:if="{{!shortageCount}}">消耗 {{consumeCount}} 样食材</view>
+  </view>
+  <!-- 菜单按钮 -->
+  <button class="menu-btn" wx:if="{{shortageCount||!menuVisible}}" bindtap="showMenu">查看菜单</button>
+  <button class="menu-btn submit" wx:if="{{!shortageCount&&menuVisible}}" bindtap="submitMenu">确认菜单</button>
+</view>
+
+<!-- 缺少的食材清单 -->
+<!-- 遮罩 -->
+<view class="mask" wx:if="{{shortageVisible}}" bindtap="showIngredients"></view>
+<!-- 购物车列表 -->
+<view class="cart-panel" wx:if="{{shortageVisible}}">
+  <view class="panel-title">
+    <text>缺少食材清单</text>
+    <text class="clear" bindtap="deleteMenu">删除菜单</text>
+  </view>
+  
+  <scroll-view class="cart-list" scroll-y="true">
+    <view class="shortage-ingredient-item" wx:for="{{shortageList}}" wx:key="name">
+      <text class="shortage-ingredient-name">{{item.name}}</text>
+      <text class="shortage-ingredient-count">{{item.count}}{{item.unit}}</text>
+    </view>
+  </scroll-view>
+</view>
+
+<!-- 确认消耗的食材清单 -->
+<!-- 遮罩 -->
+<view class="mask" wx:if="{{consumeVisible}}" bindtap="showIngredients"></view>
+<!-- 购物车列表 -->
+<view class="cart-panel" wx:if="{{consumeVisible}}">
+  <view class="panel-title">
+    <text>消耗食材清单</text>
+    <text class="clear" bindtap="deleteMenu">删除菜单</text>
+  </view>
+  
+  <scroll-view class="cart-list" scroll-y="true">
+    <view class="consume-ingredient-item" wx:for="{{consumeList}}" wx:key="name">
+      <text class="consume-ingredient-name">{{item.name}}</text>
+      <text class="consume-ingredient-count">{{item.count}}{{item.unit}}</text>
+    </view>
+  </scroll-view>
+</view>
+
+<!-- 已点菜品(菜单) -->
+<!-- 遮罩 -->
+<view class="mask" wx:if="{{menuVisible}}" bindtap="showMenu"></view>
+<!-- 购物车列表 -->
+<view class="cart-panel" wx:if="{{menuVisible}}">
+  <view class="panel-title">
+    <text>已点 {{dishCount}} 样菜品</text>
+    <text class="clear" bindtap="deleteMenu">删除菜单</text>
+  </view>
+  
+  <scroll-view class="cart-list" scroll-y="true">
+    <view wx:for="{{orderList}}" wx:key="dishId">
+      <view class="dish-item">
+        <image class="dish-image" src="{{item.dish.dishImage}}" mode="aspectFill"></image>
+        <view class="dish-info">
+          <text class="dish-name">{{item.dish.dishName}}</text>
+          <text class="clear" data-dish-id="{{item.dish.dishId}}" bindtap="deleteDish">删除</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+</view>

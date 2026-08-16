@@ -1,0 +1,16 @@
+module.exports={
+  dishCategories:[
+    "热菜",
+    "凉菜",
+    "汤类",
+    "饮料"
+  ],
+  ingredientCategories:[
+    "蔬菜",
+    "肉类",
+    "水果",
+    "蛋奶",
+    "酒水",
+    "其他"
+  ]
+}
