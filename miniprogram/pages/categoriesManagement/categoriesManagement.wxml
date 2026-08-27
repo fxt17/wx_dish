@@ -1,0 +1,38 @@
+<!-- pages/categoriesManagement/categoriesManagement.wxml -->
+<view class="container">
+  <scroll-view class="list-category" id="categoryScroll" scroll-y="true" scroll-top="{{scrollTop}}" scroll-into-view="{{scrollIntoView}}" scroll-with-animation="false" enhanced="true" bounces="false" enable-flex="true" bindscroll="onScroll">
+    <view class="category-scroll-anchor" id="categoryContentStart"></view>
+    <!-- 分类列表 -->
+    <block wx:for="{{categories}}" wx:key="*this">
+      <!-- 占位符 -->
+      <view class="list-category-item drag-placeholder" wx:if="{{dragging&&index==placeholderIndex}}">
+        <view class="placeholder-text">放置于此</view>
+      </view>
+      <!-- 正常分类项 -->
+      <view class="list-category-item {{dragging&&index==dragStartIndex?'drag-source':'category-item'}} {{dragPreparing&&index==pressingIndex?'drag-pressing':''}}" data-index="{{index}}">
+        <image class="drag-icon" src="/images/myicons/drag.png" mode="aspectFill" data-index="{{index}}" catchtouchstart="onTouchStart" catchtouchmove="onTouchMove" catchtouchend="onTouchEnd" catchtouchcancel="onTouchCancel"/>
+        <view class="category-name" data-index="{{index}}" catchtap="editCategory">{{item}}</view>
+        <image class="category-delete" src="/images/myicons/delete2.png" mode="aspectFill" data-index="{{index}}" catchtap="deleteCategory"/>
+      </view>
+    </block>
+    <!-- 当占位在最后 -->
+    <view class="list-category-item drag-placeholder" wx:if="{{dragging&&placeholderIndex==categories.length}}">
+      <view class="placeholder-text">放置于此</view>
+    </view>
+    <!-- 新建分类 -->
+    <view class="list-category-item new-category" bindtap="addCategory">
+      <image class="add-icon" src="/images/myicons/plus.png" mode="aspectFill"/>
+      <view class="category-name">新建分类</view>
+    </view>
+    <view class="list-scroll-bottom-space" id="categoryContentEnd"></view>
+  </scroll-view>
+  <!-- 拖拽到列表边界时的视觉提示 -->
+  <view class="drag-boundary-highlight drag-boundary-highlight-top" wx:if="{{dragging&&(placeholderIndex==0||(dragStartIndex==0&&placeholderIndex==1))}}"></view>
+  <view class="drag-boundary-highlight drag-boundary-highlight-bottom" wx:if="{{dragging&&(placeholderIndex==categories.length||(dragStartIndex==categories.length-1&&placeholderIndex==categories.length-1))}}"></view>
+  <!-- 悬浮拖拽项 -->
+  <view class="drag-ghost" wx:if="{{dragging}}" style="top:{{ghostTop}}px;height:{{ghostHeight}}px;">
+    <image class="drag-icon" src="/images/myicons/drag.png" mode="aspectFill"/>
+    <view class="category-name">{{draggingItem}}</view>
+    <image class="category-delete" src="/images/myicons/delete2.png" mode="aspectFill"/>
+  </view>
+</view>

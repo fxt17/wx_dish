@@ -34,6 +34,10 @@
         <text class="dish-name">{{dish.dishName}}</text>
         <view class="category-tag">{{dish.dishCategory}}</view>
       </view>
+      <view class="season-info">
+        <text class="season-label">适宜时令</text>
+        <text class="season-value">{{dishSeasonText}}</text>
+      </view>
       <view class="description" wx:if="{{dish.dishDescription}}">{{dish.dishDescription}}</view>
       <!-- 数量控制 -->
       <view class="counter-area">
@@ -49,7 +53,7 @@
       </view>
       <view class="detail-row" wx:for="{{dish.dishIngredients}}" wx:key="index">
         <text>{{item.name}}</text>
-        <text class="amount">{{item.amount}}</text>
+        <text class="amount">{{item.count}}{{item.unit}}</text>
       </view>
     </view>
 
@@ -72,3 +76,12 @@
 
 <!-- 底部导航栏 -->
 <tabBar current="detail"></tabBar>
+
+<view class="tip" wx:if="{{showLikeTip}}">
+  <image class="tip-icon" src="/images/myicons/happy.png"></image>
+  <text class="tip-text">感谢评价</text>
+</view>
+<view class="tip" wx:if="{{showDislikeTip}}">
+  <image class="tip-icon" src="/images/myicons/angry.png"></image>
+  <text class="tip-text">自己炒去</text>
+</view>

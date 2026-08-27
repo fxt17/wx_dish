@@ -16,6 +16,7 @@
     <scroll-view class="list-category" scroll-y="true" enable-flex="true">
       <view class="list-category-item {{currentIngredientCategory==item?'active':''}}" wx:for="{{ingredientCategories}}" wx:key="index" bindtap="selectCategory"
       data-category="{{item}}">{{item}}</view>
+      <view class="list-category-management" bindtap="categoriesManagement">⚙ 分类管理</view>
     </scroll-view>
     <!-- 右侧食材 -->
     <scroll-view class="list-content" scroll-y="true" enable-flex="true">

@@ -2,6 +2,7 @@
 const app = getApp();
 const dishUtil=require("../../utils/dish.js");
 const ingredientUtil=require("../../utils/ingredient.js");
+const seasonUtil=require("../../utils/season.js");
 Page({
   /**
    * 页面的初始数据
@@ -15,7 +16,8 @@ Page({
     dishIngredients:[
       {
         name:"",
-        amount:""
+        count:"",
+        unit:""
       }
     ],
     dishCookingSteps:[],
@@ -30,6 +32,7 @@ Page({
     dishes:[],
     cartVisible:false,
     totalCount:0,
+    dishSeasonText:"全年适宜"
   },
 
   /**
@@ -39,7 +42,10 @@ Page({
     let dishId = Number(options.dishId);
     this.setData({dishId:dishId, dishes:app.globalData.dishes});
     let dish=app.globalData.dishes.find(item=>{return item.dishId==dishId;});
-    this.setData({dish:dish});
+    this.setData({
+      dish:dish,
+      dishSeasonText:seasonUtil.formatSeason(dish.dishSeason)
+    });
     this.updateCartStatus();
     this.updateScore();
   },
@@ -167,7 +173,8 @@ Page({
           let dishes=app.globalData.dishes;
           let index=dishes.findIndex(item=>{return item.dishId==dishId;});
           if(index!=-1){dishes.splice(index,1);}
-          wx.navigateBack();
+          wx.showToast({title:"菜品已删除",icon:"success"});
+          setTimeout(()=>{wx.navigateBack();},1000);//返回
       }
      }
     })
@@ -188,6 +195,9 @@ Page({
     this.updateScore();
     this.refreshDish();
     // this.updateDish(dish);
+    // wx.showToast({title:"感谢评价",icon:"none"});
+    this.setData({showLikeTip: true});
+    setTimeout(() => {this.setData({showLikeTip: false});}, 3000);
   },
   // 点击不好吃
   dislikeDish(){
@@ -198,6 +208,8 @@ Page({
     this.updateScore();
     this.refreshDish();
     // this.updateDish(dish);
+    this.setData({showDislikeTip: true});
+    setTimeout(() => {this.setData({showDislikeTip: false});}, 3000);
   },
   // 更新菜品好评率
   updateScore(){
@@ -223,7 +235,11 @@ Page({
 
   refreshDish(){
     let dish=app.globalData.dishes.find(item=>item.dishId==this.data.dishId);
-    this.setData({dish:dish,dishes:app.globalData.dishes});
+    this.setData({
+      dish:dish,
+      dishes:app.globalData.dishes,
+      dishSeasonText:seasonUtil.formatSeason(dish.dishSeason)
+    });
     this.updateCartStatus();
     // this.updateScore();
   },
@@ -240,7 +256,11 @@ Page({
    */
   onShow() {
     let dish=app.globalData.dishes.find(item=>{return item.dishId==this.data.dishId;});
-    this.setData({dish:dish, dishes:app.globalData.dishes});
+    this.setData({
+      dish:dish,
+      dishes:app.globalData.dishes,
+      dishSeasonText:seasonUtil.formatSeason(dish.dishSeason)
+    });
     this.updateCartStatus();
   },
 

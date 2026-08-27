@@ -53,12 +53,9 @@ function consumeIngredients(fridge,dishes){
       // orderList.push({dishId:dish.dishId,dishImage:dish.dishImage,dishName:dish.dishName,dishCount:dish.dishCount});// 保存订单快照
       orderList.push({dish});
       dish.dishIngredients.forEach(ingredient=>{
-        let match=ingredient.amount.match(/\d+/);
-        if(!match)return;  
         let needName=ingredient.name;
-        // let needCount=parseInt(ingredient.amount)*dish.diyshCount;
-        let needCount=parseInt(match[0])*dish.dishCount;
-        let needUnit=ingredient.amount.replace(/\d+/,"");//食谱中所需食材的单位
+        let needCount=ingredient.count*dish.dishCount;
+        let needUnit=ingredient.unit;
         //-------------------------
         // 找可用食材
         //-------------------------

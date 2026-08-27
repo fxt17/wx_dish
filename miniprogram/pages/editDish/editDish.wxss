@@ -11,6 +11,21 @@
   justify-content:center;
   font-size:30rpx;
 }
+.ingredient-name{
+  flex: 1;
+}
+.ingredient-count{
+  flex: none;  
+  min-width:0;   /* 关键 */
+  max-width:150rpx;/* 关键 */
+  width: 150rpx;
+}
+.ingredient-unit{
+  flex: none;
+  min-width:0;   /* 关键 */
+  max-width:120rpx;/* 关键 */
+  width: 120rpx;
+}
 /* 删除按钮容器,避免按钮直接参与排版导致错误 */
 .delete-wrapper{
   width:80rpx;

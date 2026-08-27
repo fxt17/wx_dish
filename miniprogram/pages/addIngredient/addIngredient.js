@@ -2,6 +2,7 @@
 const app=getApp();
 const ingredientUtil=require("../../utils/ingredient.js");
 const dateUtil=require("../../utils/date.js");
+const categoryUtil=require("../../utils/category.js");
 Page({
 
   /**
@@ -37,9 +38,12 @@ Page({
      success:(res)=>{this.setData({ingredientImage:res.tempFiles[0].tempFilePath})}
     })
   },
-  change_ingredientName(e){this.setData({ingredientName:e.detail.value})},//食材名称
+  change_ingredientName(e){this.setData({ingredientName:e.detail.value.trim()})},//食材名称
   change_ingredientCount(e){this.setData({ingredientCount:e.detail.value})},//食材数量
-  change_ingredientUnit(e){this.setData({ingredientUnit:e.detail.value})},//食材单位
+  change_ingredientUnit(e){
+    let index=e.detail.value;
+    this.setData({ingredientUnit:this.data.ingredientUnits[index]})
+  },//食材单位
   change_ingredientCategory(e){//食材类别
     let index=e.detail.value;
     this.setData({ingredientCategory:this.data.ingredientCategories[index]});
@@ -51,16 +55,21 @@ Page({
     //=========================
     // 数据校验
     //=========================
-    if(!this.data.ingredientName.trim()){
+    if(!this.data.ingredientName){
       wx.showToast({title:"请输入食材名称",icon:"none"});
       return;
     }
-    if(!this.data.ingredientCount || Number(this.data.ingredientCount)<=0){
+    this.data.ingredientCount=Number(this.data.ingredientCount);
+    if(!this.data.ingredientCount || this.data.ingredientCount<=0){
       wx.showToast({title:"请输入正确数量",icon:"none"});
       return;
     }
     if(!this.data.ingredientUnit){
       wx.showToast({title:"请选择单位",icon:"none"});
+      return;
+    }
+    if((this.data.ingredientUnit==="个"||this.data.ingredientUnit==="瓶")&& !Number.isInteger(this.data.ingredientCount)){
+      wx.showToast({title:"请输入正确数量",icon:"none"});
       return;
     }
     if(!this.data.ingredientCategory){
@@ -140,9 +149,13 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {//加载页面时传递类别
-    let ingredientId = options.ingredientId;
+    this.setData({
+      ingredientUnits:categoryUtil.ingredientUnits,
+      ingredientCategories:[...categoryUtil.ingredientCategories]
+    });
+    const ingredientId = options.ingredientId;
     if(ingredientId){//对已有食材进行编辑
-      let fridgeIngredient=app.globalData.ingredients.find(item=>{return item.ingredientId==ingredientId;});//根据食材id查找对应的食材
+      const fridgeIngredient=app.globalData.ingredients.find(item=>{return item.ingredientId==ingredientId;});//根据食材id查找对应的食材
       this.setData({//同步数据
         ingredientImage:fridgeIngredient.ingredientImage,//图片
         ingredientName:fridgeIngredient.ingredientName,//名称

@@ -20,8 +20,14 @@ Page({
     shortageList:[],
     orderList:[]
   },
+
+  categoriesManagement(){
+    wx.navigateTo({url:"/pages/categoriesManagement/categoriesManagement?type=ingredient"});
+  },
+
   // 新增食材，传递当前类别
   addIngredient(){wx.navigateTo({url:"/pages/addIngredient/addIngredient?ingredientCategory="+this.data.currentIngredientCategory})},
+
   // 搜索食材
   searchIngredient(e){
     let value=e.detail.value;
@@ -184,7 +190,17 @@ Page({
     let shortage=app.globalData.shortageList;
     let consume=app.globalData.consumeList;
     let order=app.globalData.orderList;
-    this.setData({shortageList:shortage,consumeList:consume,orderList:order});   
+    const ingredientCategories = ["全部", ...categoryUtil.ingredientCategories];
+    const currentIngredientCategory = ingredientCategories.includes(this.data.currentIngredientCategory)
+      ? this.data.currentIngredientCategory
+      : "全部";
+    this.setData({
+      shortageList:shortage,
+      consumeList:consume,
+      orderList:order,
+      ingredientCategories:ingredientCategories,
+      currentIngredientCategory:currentIngredientCategory
+    });
     let ingredients = app.globalData.ingredients;
     ingredientUtil.updateIngredientExpire(ingredients);
     this.setData({ingredients:ingredients},()=>{this.updateShowIngredient();});

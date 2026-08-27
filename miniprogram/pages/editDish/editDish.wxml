@@ -35,6 +35,18 @@
         </picker>
       </view>
     </view>
+    <!-- 菜品时令 -->
+    <view class="edit-row">
+      <text class="edit-label">时令</text>
+      <view class="edit-label-right">
+        <picker mode="multiSelector" range="{{seasonMonthRanges}}" value="{{seasonPickerValue}}" bindchange="change_dishSeason">
+          <view class="edit-picker">
+            {{dishSeasonText}}
+            <text class="edit-picker-arrow">▼</text>
+          </view>
+        </picker>
+      </view>
+    </view>
   </view>
 
 
@@ -42,8 +54,16 @@
   <view class="edit-card">
     <view class="edit-title">所需食材</view>
     <view class="edit-row" wx:for="{{dish.dishIngredients}}" wx:key="index">
-      <input class="edit-input" placeholder="请输入食材名称" placeholder-class="edit-placeholder" value="{{item.name}}" data-index="{{index}}" bindinput="change_dishIngredientName"/>
-      <input class="edit-input" placeholder="请输入食材数量" placeholder-class="edit-placeholder" value="{{item.amount}}" data-index="{{index}}" bindinput="change_dishIngredientAmount"/>
+      <input class="edit-input ingredient-name" placeholder="请输入食材名称" placeholder-class="edit-placeholder" value="{{item.name}}" data-index="{{index}}" bindinput="change_dishIngredientName"/>
+      <input class="edit-input ingredient-count" type="digit" placeholder="食材数量" placeholder-class="edit-placeholder" value="{{item.count}}" data-index="{{index}}" bindinput="change_dishIngredientCount"/>
+      <view class="ingredient-unit">
+        <picker mode="selector" range="{{ingredientUnits}}" data-index="{{index}}" bindchange="change_dishIngredientUnit">
+          <view class="edit-picker {{item.unit?'':'edit-placeholder'}}">
+            {{item.unit || "单位"}}
+            <text class="edit-picker-arrow">▼</text>
+          </view>
+        </picker>
+      </view>
       <view class="delete-wrapper">
         <button class="delete" data-index="{{index}}" bindtap="delete_dishIngredient">×</button>
       </view>

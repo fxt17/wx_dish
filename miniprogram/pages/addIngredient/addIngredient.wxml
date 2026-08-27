@@ -18,14 +18,19 @@
     <view class="edit-row">
       <text class="edit-label">数量</text>
       <view class="edit-label-right">
-        <input class="edit-input" type="number" placeholder="例如：5" placeholder-class="edit-placeholder"  value="{{ingredientCount}}" bindinput="change_ingredientCount"/>
+        <input class="edit-input" type="digit" placeholder="例如：5" placeholder-class="edit-placeholder"  value="{{ingredientCount}}" bindinput="change_ingredientCount"/>
       </view>
     </view>
     <!-- 食材单位 -->
     <view class="edit-row">
       <text class="edit-label">单位</text>
       <view class="edit-label-right">
-        <input class="edit-input" placeholder="例如：个、kg、瓶" placeholder-class="edit-placeholder" value="{{ingredientUnit}}" bindinput="change_ingredientUnit"/>
+        <picker mode="selector" range="{{ingredientUnits}}" data-index="{{index}}" bindchange="change_ingredientUnit">
+          <view class="edit-picker {{ingredientUnit?'':'edit-placeholder'}}">
+            {{ingredientUnit || "请选择单位，例如：个、kg、瓶"}}
+            <text class="edit-picker-arrow">▼</text>
+          </view>
+        </picker>
       </view>
     </view>
     <!-- 食材类别 -->

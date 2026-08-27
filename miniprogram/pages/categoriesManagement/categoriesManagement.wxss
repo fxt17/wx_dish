@@ -1,0 +1,252 @@
+/* pages/categoriesManagement/categoriesManagement.wxss */
+page {
+  height: 100vh;
+  background: #f4f7f5;
+}
+
+/* =========================================================
+   页面
+   ========================================================= */
+.container {
+  display:flex;
+  width: 100%;
+  height:100vh;
+  flex-direction:column;
+
+  /* padding:20rpx; */
+  /* padding-top:100rpx; */
+  box-sizing: border-box;
+  /* position: relative; */
+  background: linear-gradient(180deg, #f9fbfa 0%, #f2f6f4 100%);
+}
+
+/* =========================================================
+   分类滚动区域
+   ========================================================= */
+.list-category {
+  width: 100%;
+  /* height: 100%; */
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  padding: 20rpx;
+  /* padding-top:500rpx; */
+  /* box-sizing: border-box; */
+
+  background: transparent;
+  flex-direction: column;
+  justify-content:flex-start;/*垂直方向元素自起始位置开始排列*/
+  box-sizing:border-box;
+}
+
+/* =========================================================
+   普通分类项
+   ========================================================= */
+.list-category-item {
+  display: flex;
+  height: 100rpx;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  font-size: 28rpx;
+  color: #35423b;
+  background: #ffffff;
+  padding: 0 20rpx;
+  border-radius: 20rpx;
+  margin: 10rpx;
+  border: 1rpx solid rgba(42, 78, 58, 0.08);
+  box-shadow: 0 5rpx 16rpx rgba(37, 76, 54, 0.07);
+  transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.drag-pressing {
+  background: #f0faf4;
+  box-shadow: 0 3rpx 10rpx rgba(7, 150, 74, 0.12);
+  transform: scale(0.985);
+}
+
+/* =========================================================
+   拖拽图标
+   ========================================================= */
+.drag-icon {
+  width: 40rpx;
+  height: 40rpx;
+  padding: 10rpx;
+  border-radius: 3rpx;
+  border-right: 3rpx solid #c5d0ca;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   分类名称
+   ========================================================= */
+.category-name {
+  flex: 1;
+  margin-left: 0;
+  text-align: center;
+}
+
+/* =========================================================
+   删除按钮
+   ========================================================= */
+.category-delete {
+  width: 40rpx;
+  height: 40rpx;
+  margin-left: 20rpx;
+  opacity: 0.65;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   新建分类
+   ========================================================= */
+.new-category {
+  justify-content: center;
+  border: 1rpx solid rgba(4, 132, 64, 0.32);
+  background: linear-gradient(135deg, #18bd6b 0%, #07964a 100%);
+  box-shadow: 0 7rpx 18rpx rgba(7, 150, 74, 0.22);
+}
+.new-category .category-name {
+  flex: none;
+  margin-left: 12rpx;
+  text-align: center;
+  color: #ffffff;
+}
+.add-icon {
+  width: 25rpx;
+  height: 25rpx;
+  line-height: 1;
+  filter: brightness(0) invert(1);
+}
+
+/* =========================================================
+   拖拽占位区域
+   ========================================================= */
+.drag-placeholder {
+  background: linear-gradient(
+    90deg,
+    rgba(7, 193, 96, 0.08) 0%,
+    rgba(7, 193, 96, 0.18) 50%,
+    rgba(7, 193, 96, 0.08) 100%
+  );
+  border: 3rpx dashed rgba(7, 193, 96, 0.62);
+  box-shadow: inset 0 0 18rpx rgba(7, 193, 96, 0.08);
+  justify-content: center;
+}
+
+.category-scroll-anchor {
+  width: 100%;
+  height: 0;
+  flex-shrink: 0;
+}
+
+/* 拖拽期间保留原触摸节点，但让它退出列表占位。
+   不能直接从数组删除最后一项，否则承载 touchmove 的节点会被销毁。 */
+.drag-source {
+  height: 0;
+  min-height: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+/* =========================================================
+   占位文字
+   ========================================================= */
+.placeholder-text {
+  font-size: 26rpx;
+  color: #07c160;
+}
+
+/* =========================================================
+   到达列表顶部/底部时的边界高亮
+   ========================================================= */
+.drag-boundary-highlight {
+  position: fixed;
+  left: 8%;
+  right: 8%;
+  height: 48rpx;
+  z-index: 10000;
+  pointer-events: none;
+  transform-origin: center;
+  animation: boundary-highlight-pulse 1.1s ease-in-out infinite;
+}
+
+.drag-boundary-highlight-top {
+  top: 0;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(7, 193, 96, 0.95) 0%,
+    rgba(7, 193, 96, 0.48) 32%,
+    rgba(7, 193, 96, 0.16) 56%,
+    rgba(7, 193, 96, 0) 78%
+  );
+}
+
+.drag-boundary-highlight-bottom {
+  bottom: 0;
+  background: radial-gradient(
+    ellipse at 50% 100%,
+    rgba(7, 193, 96, 0.95) 0%,
+    rgba(7, 193, 96, 0.48) 32%,
+    rgba(7, 193, 96, 0.16) 56%,
+    rgba(7, 193, 96, 0) 78%
+  );
+}
+
+@keyframes boundary-highlight-pulse {
+  0%, 100% {
+    opacity: 0.58;
+    transform: scaleX(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+/* =========================================================
+   悬浮拖拽项
+   ========================================================= */
+.drag-ghost {
+  position: fixed;
+  left: 30rpx;
+  right: 30rpx;
+  z-index: 9999;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20rpx;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 20rpx;
+  border: 1rpx solid rgba(7, 193, 96, 0.22);
+  box-shadow: 0 14rpx 38rpx rgba(30, 78, 52, 0.22);
+  opacity: 0.96;
+  transform: scale(1.02);
+}
+
+/* =========================================================
+   悬浮项的名称
+   ========================================================= */
+.drag-ghost .category-name {
+  color: #333;
+  font-weight: 500;
+}
+
+/* =========================================================
+   悬浮项拖拽图标
+   ========================================================= */
+.drag-ghost .drag-icon {
+  border-right: 3rpx solid #07c160;
+}
+
+.list-scroll-bottom-space {
+  /* height: 250rpx; */
+  flex: 1;
+  /* flex-shrink: 0; */
+}

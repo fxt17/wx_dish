@@ -14,8 +14,10 @@
   <view class="list-container">
     <!-- 左侧分类 -->
     <scroll-view class="list-category" scroll-y="true" enable-flex="true">
-      <view class="list-category-item {{currentDishCategory==item?'active':''}}" wx:for="{{dishCategories}}" wx:key="index" bindtap="selectCategory"
-      data-category="{{item}}">{{item}}</view>
+      <view class="list-category-item {{currentDishCategory==item?'active':''}}" wx:for="{{dishCategories}}" wx:key="index" bindtap="selectCategory" data-category="{{item}}">{{item}}</view>
+      <view class="list-category-management" bindtap="categoriesManagement">⚙ 分类管理</view>
+      <!-- 给底部购物车留空间 -->
+      <view class="list-scroll-bottom-space-categories"></view>
     </scroll-view>
     <!-- 右侧菜品 -->
     <scroll-view class="list-content" scroll-y="true" enable-flex="true">

@@ -25,8 +25,19 @@ Page({
   },
   onShow(){// 数据更新/同步
     // this.loadScore();
-    this.refreshDishes();
+    const dishCategories = ["全部", ...categoryUtil.dishCategories];
+    const currentDishCategory = dishCategories.includes(this.data.currentDishCategory)? this.data.currentDishCategory:"全部";
+
+    this.setData({
+      dishCategories: dishCategories,
+      currentDishCategory: currentDishCategory
+    }, () => {this.refreshDishes();});
   },
+
+  categoriesManagement(){
+    wx.navigateTo({url:"/pages/categoriesManagement/categoriesManagement?type=dish"});
+  },
+
   // 加菜
   selectDish(e){
     let dishId=e.detail.dishId;
@@ -39,7 +50,7 @@ Page({
     dishUtil.cancelDish(app.globalData.dishes,dishId);//更新dishCount
     this.refreshDishes();
   },
-  
+
   // 搜索菜品
   searchDish(e){
     let value=e.detail.value;
@@ -80,6 +91,10 @@ Page({
           dishRating:0,       // 星级评分
           dishCategory:category,
           dishDescription:"",
+          dishSeason:{
+            startMonth:1,
+            endMonth:12
+          },
           dishIngredients:[],
           dishCookingSteps:[],
           //评价统计
@@ -102,6 +117,10 @@ Page({
           dishRating:0,       // 星级评分
           dishCategory:category,
           dishDescription:"",
+          dishSeason:{
+            startMonth:1,
+            endMonth:12
+          },
           dishIngredients:[],
           dishCookingSteps:[],
           //评价统计
@@ -116,6 +135,7 @@ Page({
       }
     })
   },
+
   // 新增菜品的分类弹窗
   chooseCategory(callback){
     wx.showActionSheet({
@@ -123,6 +143,7 @@ Page({
       success:(res)=>{callback(categoryUtil.dishCategories[res.tapIndex]);}
     });
   },
+
   // 选择菜品类别
   selectCategory(e){
     let dishCategory=e.currentTarget.dataset.category;
@@ -141,6 +162,7 @@ Page({
     app.globalData.dishes.forEach(item=>{item.dishCount=0;});//dishes中全部dish的dishCount清零
     this.refreshDishes();
   },
+
   // 提交菜单（购物车）
   submitOrder(){
     // 先更新食材状态
@@ -166,6 +188,7 @@ Page({
     }
     else{this.confirmSubmit();}
   },
+
   confirmSubmit(){
       let result=ingredientUtil.consumeIngredients(// 消耗的冰箱食材+菜单缺少的食材
       app.globalData.ingredients,//冰箱食材
@@ -198,6 +221,7 @@ Page({
       this.finishOrder();//提交菜单直接完成菜品的计数等
     }
   },
+
   // 订单提交成功后的操作(更新界面显示数据)
   finishOrder(){
     app.globalData.dishes.forEach(item=>{// 详情页评价按钮,菜品下单次数,菜品选取数量
@@ -216,6 +240,7 @@ Page({
     app.globalData.dishes.forEach(item=>{this.getStarRating(item);});
     this.setData({dishes:app.globalData.dishes});
   },
+
   // 好评率转换为星级
   getStarRating(dish){
     let total=dish.likeCount+dish.dislikeCount;
@@ -231,6 +256,7 @@ Page({
     app.globalData.dishes.forEach(item=>{total += item.dishCount;});//计算总选取的菜品数
     this.setData({totalCount:total});
   },
+
   // 更新显示菜品
   updateShowDishes(){
     let result=[...this.data.dishes];
@@ -249,10 +275,10 @@ Page({
     });
     this.setData({showDishes:result});
   },
+
   refreshDishes(){
     this.setData({dishes:app.globalData.dishes});//同步到全局的dish和dishes
     this.updateShowDishes();//更新显示列表
     this.updateCartStatus();//更新购物车菜品数量
   },
 })
-

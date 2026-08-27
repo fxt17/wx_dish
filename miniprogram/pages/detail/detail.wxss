@@ -19,6 +19,23 @@
   border-radius:30rpx;
   font-size:32rpx;
 }
+.season-info{
+  display:flex;
+  align-items:center;
+  gap:16rpx;
+  margin-bottom:20rpx;
+}
+.season-label{
+  color:#999;
+  font-size:26rpx;
+}
+.season-value{
+  padding:6rpx 18rpx;
+  border-radius:24rpx;
+  background:#eef8f2;
+  color:#07a653;
+  font-size:26rpx;
+}
 .description{/*菜品描述*/
   padding: 20rpx;
   font-size:28rpx;
@@ -122,4 +139,38 @@
 .evaluate-btn image{
   width:50rpx;
   height:50rpx;
+}
+
+/* 自定义提示 */
+.tip {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  min-width: 220rpx;
+  padding: 30rpx 40rpx;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background:rgba(0,0,0,0.55);
+  border-radius: 20rpx;
+
+  z-index: 9999;
+}
+
+/* 图标 */
+.tip-icon {
+  width: 150rpx;
+  height: 150rpx;
+  margin-bottom: 20rpx;
+}
+
+/* 文字 */
+.tip-text {
+  font-size: 35rpx;
+  color: white;
 }

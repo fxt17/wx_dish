@@ -20,11 +20,13 @@ App({
           dishIngredients:[
             {
               name:"西红柿",
-              amount:"2个"
+              count:2,
+              unit:"个"
             },
             {
               name:"鸡蛋",
-              amount:"3个"
+              count:3,
+              unit:"个"
             }
           ],
           dishCookingSteps:[
@@ -50,7 +52,8 @@ App({
           dishIngredients:[
             {
               name:"猪肉",
-              amount:"500g"
+              count:500,
+              unit:"g"
             }
           ],
           dishCookingSteps:[""],
@@ -72,7 +75,8 @@ App({
           dishIngredients:[
             {
               name:"生菜",
-              amount:"500g"
+              count:500,
+              unit:"g"
             }
           ],
           dishCookingSteps:[""],
@@ -94,15 +98,18 @@ App({
           dishIngredients:[
             {
               name:"猪肉",
-              amount:"500g"
+              count:500,
+              unit:"g"
             },
             {
               name:"木耳",
-              amount:"200g"
+              count:200,
+              unit:"g"
             },
             {
               name:"胡萝卜",
-              amount:"200g"
+              count:200,
+              unit:"g"
             }
           ],
           dishCookingSteps:[""],
@@ -124,7 +131,8 @@ App({
           dishIngredients:[
             {
               name:"排骨",
-              amount:"500g"
+              count:500,
+              unit:"g"
             }
           ],
           dishCookingSteps:[""],
@@ -146,11 +154,13 @@ App({
           dishIngredients:[
             {
               name:"可乐",
-              amount:"1瓶"
+              count:1,
+              unit:"瓶"
             },
             {
               name:"鸡翅",
-              amount:"500g"
+              count:500,
+              unit:"g"
             }
           ],
           dishCookingSteps:[""],
@@ -172,11 +182,13 @@ App({
           dishIngredients:[
             {
               name:"豆腐",
-              amount:"500g"
+              count:500,
+              unit:"g"
             },
             {
               name:"牛肉",
-              amount:"100g"
+              count:100,
+              unit:"g"
             }
           ],
           dishCookingSteps:[""],
@@ -198,11 +210,13 @@ App({
           dishIngredients:[
             {
               name:"茄子",
-              amount:"200g"
+              count:200,
+              unit:"g"
             },
             {
               name:"猪肉",
-              amount:"100g"
+              count:100,
+              unit:"g"
             }
           ],
           dishCookingSteps:[""],
@@ -224,15 +238,18 @@ App({
           dishIngredients:[
             {
               name:"土豆",
-              amount:"200g"
+              count:200,
+              unit:"g"
             },
             {
               name:"茄子",
-              amount:"200g"
+              count:200,
+              unit:"g"
             },
             {
               name:"青椒",
-              amount:"200g"
+              count:200,
+              unit:"g"
             }
           ],
           dishCookingSteps:[""],
@@ -254,7 +271,8 @@ App({
           dishIngredients:[
             {
               name:"黄瓜",
-              amount:"300g"
+              count:300,
+              unit:"g"
             }
           ],
           dishCookingSteps:[""],
@@ -276,7 +294,8 @@ App({
           dishIngredients:[
             {
               name:"折耳根",
-              amount:"200g"
+              count:200,
+              unit:"g"
             }
           ],
           dishCookingSteps:[""],
@@ -298,11 +317,13 @@ App({
           dishIngredients:[
             {
               name:"柠檬",
-              amount:"200g"
+              count:200,
+              unit:"g"
             },
             {
               name:"金桔",
-              amount:"200g"
+              count:200,
+              unit:"g"
             }
           ],
           dishCookingSteps:[""],
@@ -324,11 +345,13 @@ App({
           dishIngredients:[
             {
               name:"可乐",
-              amount:"1瓶"
+              count:1,
+              unit:"瓶"
             },
             {
               name:"生姜",
-              amount:"100g"
+              count:100,
+              unit:"g"
             }
           ],
           dishCookingSteps:[""],

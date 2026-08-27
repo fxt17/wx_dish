@@ -1,13 +1,20 @@
 // pages/editDish/editDish.js
 const app=getApp();
 const categoryUtil=require("../../utils/category.js");
+const seasonUtil=require("../../utils/season.js");
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    dish:null
+    dish:null,
+    seasonMonthRanges:[
+      seasonUtil.monthOptions,
+      seasonUtil.monthOptions
+    ],
+    seasonPickerValue:[0, 11],
+    dishSeasonText:"全年适宜"
   },
 
   /**
@@ -16,8 +23,16 @@ Page({
   onLoad(options){
     let dishId=options.dishId;//接收编辑按键传递的详情页面菜品id
     let dish=app.globalData.dishes.find(item=>{return item.dishId==dishId;});//根据菜品id查找对应的菜品
-    this.setData({dish:Object.assign({},dish)});// 注意复制一份
-    this.setData({dishCategories:categoryUtil.dishCategories});
+    dish=JSON.parse(JSON.stringify(dish));// 注意复制一份
+    const dishSeason=seasonUtil.normalizeSeason(dish.dishSeason);
+    dish.dishSeason=dishSeason;
+    this.setData({
+      dish:dish,
+      dishCategories:categoryUtil.dishCategories,
+      ingredientUnits:categoryUtil.ingredientUnits,
+      seasonPickerValue:[dishSeason.startMonth-1,dishSeason.endMonth-1],
+      dishSeasonText:seasonUtil.formatSeason(dishSeason)
+    });
   },
 
   change_dishImage(){//修改菜品图片
@@ -32,9 +47,7 @@ Page({
   },
 
   change_dishName(e){//修改菜品名称
-    let dish=this.data.dish;
-    dish.dishName=e.detail.value;//接收输出框的菜品名称
-    this.setData({dish:dish});//编辑页面数据缓存
+    this.setData({"dish.dishName": e.detail.value});
   },
 
   change_dishCategory(e){// 修改当前菜品分类
@@ -43,19 +56,37 @@ Page({
     this.setData({"dish.dishCategory":category});
   },
 
+  change_dishSeason(e){// 修改当前菜品的适宜月份范围
+    const startMonth=Number(e.detail.value[0])+1;
+    const endMonth=Number(e.detail.value[1])+1;
+    const dishSeason={startMonth:startMonth,endMonth:endMonth};
+    this.setData({
+      "dish.dishSeason":dishSeason,
+      seasonPickerValue:[startMonth-1,endMonth-1],
+      dishSeasonText:seasonUtil.formatSeason(dishSeason)
+    });
+  },
+
   change_dishDescription(e){// 修改当前菜品描述
     this.setData({"dish.dishDescription":e.detail.value});
   },
 
   change_dishIngredientName(e){//改变菜品所需食材名字
     let index=e.currentTarget.dataset.index;
-    let value=e.detail.value;
+    let value=e.detail.value.trim();// .trim去掉首尾空白字符
     this.setData({[`dish.dishIngredients[${index}].name`]:value});
   },
 
-  change_dishIngredientAmount(e){//改变菜品所需食材数量
+  change_dishIngredientCount(e){//改变菜品所需食材数量
     let index=e.currentTarget.dataset.index;
-    this.setData({[`dish.dishIngredients[${index}].amount`]:e.detail.value});
+    this.setData({[`dish.dishIngredients[${index}].count`]:e.detail.value});
+  },
+
+  change_dishIngredientUnit(e){//改变菜品所需食材数量
+    let index = e.currentTarget.dataset.index;
+    let unitIndex = Number(e.detail.value);
+    let unit = this.data.ingredientUnits[unitIndex];
+    this.setData({[`dish.dishIngredients[${index}].unit`]:unit});
   },
 
   delete_dishIngredient(e){//删除菜品食材
@@ -69,7 +100,8 @@ Page({
     let list=this.data.dish.dishIngredients || [];
     list.push({
       name:"",
-      amount:""
+      count:"",
+      unit:""
     });
     this.setData({"dish.dishIngredients":list});
   },
@@ -93,11 +125,39 @@ Page({
   },
 
   saveDish(){
-    let dishId=this.data.dish.dishId;
-    let dishes=app.globalData.dishes;
-    let index=dishes.findIndex(item=>{return item.dishId==dishId;});
-    if(index!=-1){dishes[index]=this.data.dish;}//保存更新全局数据
-    wx.navigateBack();
+    let dish = JSON.parse(JSON.stringify(this.data.dish));
+    // =========================
+    // 检查食材数量
+    // =========================
+    for (let ingredient of dish.dishIngredients) {
+      if(!ingredient.name){
+        wx.showToast({title:"请输入食材名称",icon:"none"});
+        return;
+      }
+      let count = Number(ingredient.count);
+      if (!Number.isFinite(count) || count <= 0) {// 数量必须是有效数字，并且大于0
+        wx.showToast({
+          title: `食材「${ingredient.name}」数量不正确`,
+          icon: "none"
+        });
+        return;
+      }
+      // 个、瓶必须是整数
+      if((ingredient.unit === "个" || ingredient.unit === "瓶") && !Number.isInteger(count)) {
+        wx.showToast({
+          title: `「${ingredient.name}」数量必须是整数`,
+          icon: "none"
+        });
+        return;
+      }
+      // 保存为 Number
+      ingredient.count = count;
+    }
+
+    let index=app.globalData.dishes.findIndex(item=>{return item.dishId==dish.dishId;});
+    if(index!=-1){app.globalData.dishes[index]=dish;}//保存更新全局数据
+    wx.showToast({title:"修改成功",icon:"success"});
+    setTimeout(()=>{wx.navigateBack();},1000);//返回详情界面
   },
 
   /**

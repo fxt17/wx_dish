@@ -25,7 +25,8 @@ Page({
           let ingredients=app.globalData.ingredients;
           let index=ingredients.findIndex(item=>{return item.ingredientId==ingredientId;});
           if(index!=-1){ingredients.splice(index,1);}
-          wx.navigateBack();
+          wx.showToast({title:"食材已删除",icon:"success"});
+          setTimeout(()=>{wx.navigateBack();},1000);//返回
       }
      }
     })
