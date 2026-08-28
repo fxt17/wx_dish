@@ -5,8 +5,29 @@
   font-size: 30rpx;
   font-weight:bold;
   color: #333;
-  margin-bottom: 10rpx;
+  margin-bottom:10rpx;
   /* align-self: flex-end; */
+}
+.in-season-badge{
+  position:absolute;
+  top:0;
+  right:0;
+  z-index:2;
+  padding:8rpx 18rpx;
+  border-radius:0 20rpx 0 20rpx;
+  background:#07c160;
+  color:white;
+  font-size:22rpx;
+  line-height:1.4;
+}
+.list-content-item{
+  position:relative;
+}
+.list-content-item.in-season{
+  background:linear-gradient(135deg, #f1fff6 0%, #ffffff 72%);
+  box-shadow:
+    inset 6rpx 0 0 #07c160,
+    0 4rpx 18rpx rgba(7, 193, 96, 0.16);
 }
 .dish-rating{
   font-size:26rpx;

@@ -13,7 +13,7 @@
     <view class="edit-row">
       <text class="edit-label">菜名</text>
       <view class="edit-label-right">
-        <input class="edit-input" placeholder="请输入食材名称" placeholder-class="edit-placeholder" value="{{dish.dishName}}" bindinput="change_dishName"/>
+        <input class="edit-input" placeholder="请输入菜品名称" placeholder-class="edit-placeholder" value="{{dish.dishName}}" bindinput="change_dishName"/>
       </view>
     </view>
     <!-- 菜品描述 -->
@@ -39,12 +39,12 @@
     <view class="edit-row">
       <text class="edit-label">时令</text>
       <view class="edit-label-right">
-        <picker mode="multiSelector" range="{{seasonMonthRanges}}" value="{{seasonPickerValue}}" bindchange="change_dishSeason">
+        <double-picker title="选择适宜时令" left-title="当年" right-title="{{seasonEndYearText}}" left-range="{{seasonMonthRanges[0]}}" right-range="{{seasonMonthRanges[1]}}" value="{{seasonPickerValue}}" bind:columnchange="preview_dishSeason" bind:change="change_dishSeason" bind:cancel="reset_dishSeasonPreview">
           <view class="edit-picker">
             {{dishSeasonText}}
             <text class="edit-picker-arrow">▼</text>
           </view>
-        </picker>
+        </double-picker>
       </view>
     </view>
   </view>
@@ -87,6 +87,6 @@
 
   <!-- 底部操作栏 -->
   <view class="edit-bottom">
-    <button class="edit-save-btn" bindtap="saveDish">保存修改</button>
+    <button class="edit-save-btn" bindtap="saveDish">{{isNewDish?"创建菜谱":"保存修改"}}</button>
   </view>
 </view>

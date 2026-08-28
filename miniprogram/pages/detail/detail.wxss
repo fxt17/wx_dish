@@ -12,29 +12,24 @@
   font-size:42rpx;
   font-weight:bold;
 }
+.dish-tag{/*标签*/
+  display:flex; 
+  flex-direction:row;
+  gap: 10rpx;
+}
 .category-tag{/*菜品类别*/
-  background:#fff0e6;
-  color:#ff7a00;
   padding:8rpx 20rpx;
   border-radius:30rpx;
-  font-size:32rpx;
-}
-.season-info{
-  display:flex;
-  align-items:center;
-  gap:16rpx;
-  margin-bottom:20rpx;
-}
-.season-label{
-  color:#999;
   font-size:26rpx;
+  background:#fff0e6;
+  color:#ff7a00;
 }
-.season-value{
-  padding:6rpx 18rpx;
-  border-radius:24rpx;
+.season-tag{
+  padding:8rpx 20rpx;
+  border-radius:30rpx;
+  font-size:26rpx;
   background:#eef8f2;
   color:#07a653;
-  font-size:26rpx;
 }
 .description{/*菜品描述*/
   padding: 20rpx;

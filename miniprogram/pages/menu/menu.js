@@ -2,6 +2,7 @@ const app=getApp();
 const dishUtil=require("../../utils/dish.js");
 const categoryUtil=require("../../utils/category.js");
 const ingredientUtil=require("../../utils/ingredient.js");
+const seasonUtil=require("../../utils/season.js");
 Page({
   data: {
     searchText:"",
@@ -11,6 +12,7 @@ Page({
     showDishes:[],//当前显示的菜品列表
     totalCount:0
   },
+
   onLoad(){
     this.setData({
       dishes:app.globalData.dishes,     
@@ -23,6 +25,7 @@ Page({
     this.refreshDishes();
     // this.updateShowDishes();
   },
+
   onShow(){// 数据更新/同步
     // this.loadScore();
     const dishCategories = ["全部", ...categoryUtil.dishCategories];
@@ -59,88 +62,9 @@ Page({
   },
   // 创建新的菜品
   addDish(){
-    wx.showModal({
-      title:"新增菜品",
-      editable:true,
-      placeholderText:"请输入菜品名称",
-      success:(res)=>{//showModal执行成功后调用这个回调函数
-        if(res.confirm && res.content){//用户返回确认且非空
-          let name=res.content;
-          let category=this.data.currentDishCategory;// 当前分类
-          if(category=="全部")// 如果当前是全部，需要选择分类
-            this.chooseCategory((selectCategory)=>{this.createDish(name,selectCategory);});
-          else// 直接使用当前分类
-            this.createDish(name,category);
-        }
-      }
-    })
-  },
-  createDish(name,category){
-    wx.chooseMedia({
-      dishCount:1,
-      mediaType:["image"],
-      sourceType:["album","camera"],
-      success:(imageRes)=>{
-        let imagePath=imageRes.tempFiles[0].tempFilePath;
-        let dish={
-          dishId:Date.now(),
-          dishImage:imagePath,
-          dishName:name,
-          dishCount:0,
-          dishOrderCount:0,   // 总下单次数
-          dishRating:0,       // 星级评分
-          dishCategory:category,
-          dishDescription:"",
-          dishSeason:{
-            startMonth:1,
-            endMonth:12
-          },
-          dishIngredients:[],
-          dishCookingSteps:[],
-          //评价统计
-          likeCount:0,
-          dislikeCount:0,
-          // 是否有待评价订单
-          canEvaluate:false
-        };
-        app.globalData.dishes.push(dish);
-        this.setData({dishes:app.globalData.dishes});
-        this.updateShowDishes();
-      },
-      fail:()=>{
-        let dish={
-          dishId:Date.now(),
-          dishImage:"/images/myicons/食物.png",
-          dishName:name,
-          dishCount:0,
-          dishOrderCount:0,   // 总下单次数
-          dishRating:0,       // 星级评分
-          dishCategory:category,
-          dishDescription:"",
-          dishSeason:{
-            startMonth:1,
-            endMonth:12
-          },
-          dishIngredients:[],
-          dishCookingSteps:[],
-          //评价统计
-          likeCount:0,
-          dislikeCount:0,
-          // 是否有待评价订单
-          canEvaluate:false
-        };
-        app.globalData.dishes.push(dish);
-        this.setData({dishes:app.globalData.dishes});
-        this.updateShowDishes();
-      }
-    })
-  },
-
-  // 新增菜品的分类弹窗
-  chooseCategory(callback){
-    wx.showActionSheet({
-      itemList:categoryUtil.dishCategories,
-      success:(res)=>{callback(categoryUtil.dishCategories[res.tapIndex]);}
+    const dishCategory=encodeURIComponent(this.data.currentDishCategory);
+    wx.navigateTo({
+      url:`/pages/editDish/editDish?dishCategory=${dishCategory}`
     });
   },
 
@@ -270,15 +194,17 @@ Page({
     result=result.map(item=>{
       return {
         ...item,
-        starRating:this.getStarRating(item)
+        starRating:this.getStarRating(item),
+        isInSeason:seasonUtil.isInSeason(item.dishSeason)
       }
     });
     this.setData({showDishes:result});
   },
 
   refreshDishes(){
-    this.setData({dishes:app.globalData.dishes});//同步到全局的dish和dishes
-    this.updateShowDishes();//更新显示列表
-    this.updateCartStatus();//更新购物车菜品数量
+    this.setData({dishes:app.globalData.dishes},()=>{//同步到全局的dish和dishes
+      this.updateShowDishes();//更新显示列表
+      this.updateCartStatus();//更新购物车菜品数量
+    });
   },
 })

@@ -35,11 +35,9 @@ function formatSeason(season) {
     "12-2": "冬季"
   };
   const seasonName = seasonNames[`${startMonth}-${endMonth}`];
-  let rangeText = startMonth === endMonth
-    ? `${startMonth}月`
-    : startMonth > endMonth
-      ? `${startMonth}月—次年${endMonth}月`
-      : `${startMonth}月—${endMonth}月`;
+  let rangeText = startMonth === endMonth? 
+    `${startMonth}月` : startMonth > endMonth?
+      `${startMonth}月-次年${endMonth}月` : `${startMonth}月-${endMonth}月`;
 
   if (seasonName) {
     rangeText += ` · ${seasonName}`;
@@ -47,8 +45,23 @@ function formatSeason(season) {
   return rangeText;
 }
 
+function isInSeason(season, currentMonth = new Date().getMonth() + 1) {
+  const normalized = normalizeSeason(season);
+  const startMonth = normalized.startMonth;
+  const endMonth = normalized.endMonth;
+
+  // 普通范围，例如3月—5月。
+  if (startMonth <= endMonth) {
+    return currentMonth >= startMonth && currentMonth <= endMonth;
+  }
+
+  // 跨年范围，例如12月—次年2月。
+  return currentMonth >= startMonth || currentMonth <= endMonth;
+}
+
 module.exports = {
   monthOptions,
   normalizeSeason,
-  formatSeason
+  formatSeason,
+  isInSeason
 };

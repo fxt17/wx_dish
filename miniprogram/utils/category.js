@@ -27,7 +27,6 @@ const categoryData = {
   dishCategories: loadCategories("dish", defaultDishCategories),
   ingredientCategories: loadCategories("ingredient", defaultIngredientCategories),
   ingredientUnits: ["g", "kg", "mL", "L", "个", "瓶"],
-  ingredientUnits: ["g", "kg", "mL", "L", "个", "瓶"],
 
   // 原地更新导出的数组，保证已经加载本模块的页面也能读取到新分类；
   // 同时写入本地存储，使分类在小程序重新启动后仍然保留。

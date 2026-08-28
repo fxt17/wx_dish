@@ -2,6 +2,38 @@
 const app=getApp();
 const categoryUtil=require("../../utils/category.js");
 const seasonUtil=require("../../utils/season.js");
+
+function decodeOptionValue(value){
+  try{
+    return decodeURIComponent(value || "");
+  }
+  catch(error){
+    return value || "";
+  }
+}
+
+function createEmptyDish(dishCategory){
+  return {
+    dishId:null,
+    dishImage:"/images/myicons/食物.png",
+    dishName:"",
+    dishCount:0,
+    dishOrderCount:0,
+    dishRating:0,
+    dishCategory:dishCategory,
+    dishDescription:"",
+    dishSeason:{
+      startMonth:1,
+      endMonth:12
+    },
+    dishIngredients:[],
+    dishCookingSteps:[],
+    likeCount:0,
+    dislikeCount:0,
+    canEvaluate:false
+  };
+}
+
 Page({
 
   /**
@@ -9,30 +41,55 @@ Page({
    */
   data: {
     dish:null,
+    isNewDish:false,
     seasonMonthRanges:[
       seasonUtil.monthOptions,
       seasonUtil.monthOptions
     ],
     seasonPickerValue:[0, 11],
-    dishSeasonText:"全年适宜"
+    dishSeasonText:"全年适宜",
+    seasonEndYearText:"当年"
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options){
-    let dishId=options.dishId;//接收编辑按键传递的详情页面菜品id
-    let dish=app.globalData.dishes.find(item=>{return item.dishId==dishId;});//根据菜品id查找对应的菜品
-    dish=JSON.parse(JSON.stringify(dish));// 注意复制一份
+    const dishId=options.dishId;//接收编辑按键传递的详情页面菜品id
+    const isNewDish=!dishId;
+    let dish;
+
+    if(dishId){//对已有食材进行编辑
+      const sourceDish=app.globalData.dishes.find(item=>{return item.dishId==dishId;});//根据菜品id查找对应的菜品
+      if(!sourceDish){
+        wx.showToast({title:"菜品不存在",icon:"none"});
+        setTimeout(()=>{wx.navigateBack();},1000);
+        return;
+      }
+      dish=JSON.parse(JSON.stringify(sourceDish));// 注意复制一份
+      dish.dishIngredients=Array.isArray(dish.dishIngredients)?dish.dishIngredients:[];
+      dish.dishCookingSteps=Array.isArray(dish.dishCookingSteps)?dish.dishCookingSteps:[];
+    }
+    else{// 新增菜品
+      const requestedCategory=decodeOptionValue(options.dishCategory);
+      const dishCategory=requestedCategory!=="全部"&&categoryUtil.dishCategories.includes(requestedCategory)
+        ? requestedCategory
+        : "";
+      dish=createEmptyDish(dishCategory);
+    }
+
     const dishSeason=seasonUtil.normalizeSeason(dish.dishSeason);
     dish.dishSeason=dishSeason;
     this.setData({
       dish:dish,
-      dishCategories:categoryUtil.dishCategories,
-      ingredientUnits:categoryUtil.ingredientUnits,
+      isNewDish:isNewDish,
+      ingredientUnits:[...categoryUtil.ingredientUnits],
+      dishCategories:[...categoryUtil.dishCategories],
       seasonPickerValue:[dishSeason.startMonth-1,dishSeason.endMonth-1],
-      dishSeasonText:seasonUtil.formatSeason(dishSeason)
+      dishSeasonText:seasonUtil.formatSeason(dishSeason),
+      seasonEndYearText:dishSeason.endMonth>=dishSeason.startMonth ? "当年" : "次年"
     });
+    wx.setNavigationBarTitle({title:isNewDish?"新增菜谱":"菜品编辑"});
   },
 
   change_dishImage(){//修改菜品图片
@@ -56,13 +113,29 @@ Page({
     this.setData({"dish.dishCategory":category});
   },
 
-  change_dishSeason(e){// 修改当前菜品的适宜月份范围
-    const startMonth=Number(e.detail.value[0])+1;
-    const endMonth=Number(e.detail.value[1])+1;
-    const dishSeason={startMonth:startMonth,endMonth:endMonth};
+  preview_dishSeason(e){// 滚动时只更新右列的年份提示
+    const value=e.detail.value;
+    this.setData({
+      seasonEndYearText:value[1]>=value[0] ? "当年" : "次年"
+    });
+  },
+
+  reset_dishSeasonPreview(){// 取消选择后恢复已确认范围的年份提示
+    const value=this.data.seasonPickerValue;
+    this.setData({
+      seasonEndYearText:value[1]>=value[0] ? "当年" : "次年"
+    });
+  },
+
+  change_dishSeason(e){// 确认后再写入当前菜品
+    const value=e.detail.value;
+    const dishSeason={
+      startMonth:Number(value[0])+1,
+      endMonth:Number(value[1])+1
+    };
     this.setData({
       "dish.dishSeason":dishSeason,
-      seasonPickerValue:[startMonth-1,endMonth-1],
+      seasonPickerValue:value,
       dishSeasonText:seasonUtil.formatSeason(dishSeason)
     });
   },
@@ -127,9 +200,18 @@ Page({
   saveDish(){
     let dish = JSON.parse(JSON.stringify(this.data.dish));
     // =========================
-    // 检查食材数量
+    // 数据校验
     // =========================
-    for (let ingredient of dish.dishIngredients) {
+    dish.dishName=(dish.dishName || "").trim();
+    if(!dish.dishName){// 校验菜品名称
+      wx.showToast({title:"请输入菜品名称",icon:"none"});
+      return;
+    }
+    if(!dish.dishCategory || !this.data.dishCategories.includes(dish.dishCategory)){
+      wx.showToast({title:"请选择菜品类别",icon:"none"});
+      return;
+    }
+    for (let ingredient of dish.dishIngredients) {//检查食材
       if(!ingredient.name){
         wx.showToast({title:"请输入食材名称",icon:"none"});
         return;
@@ -154,9 +236,20 @@ Page({
       ingredient.count = count;
     }
 
-    let index=app.globalData.dishes.findIndex(item=>{return item.dishId==dish.dishId;});
-    if(index!=-1){app.globalData.dishes[index]=dish;}//保存更新全局数据
-    wx.showToast({title:"修改成功",icon:"success"});
+    if(this.data.isNewDish){// 新增菜品
+      dish.dishId=Date.now();
+      app.globalData.dishes.push(dish);
+      wx.showToast({title:"添加成功",icon:"success"});
+    }
+    else{// 保存更新已有菜品的全局数据
+      const index=app.globalData.dishes.findIndex(item=>{return item.dishId==dish.dishId;});
+      if(index===-1){
+        wx.showToast({title:"菜品不存在",icon:"none"});
+        return;
+      }
+      app.globalData.dishes[index]=dish;
+      wx.showToast({title:"修改成功",icon:"success"});
+    }
     setTimeout(()=>{wx.navigateBack();},1000);//返回详情界面
   },
 

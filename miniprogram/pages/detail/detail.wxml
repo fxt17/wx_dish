@@ -32,11 +32,10 @@
     <view class="detail-card">
       <view class="main-title-row">
         <text class="dish-name">{{dish.dishName}}</text>
-        <view class="category-tag">{{dish.dishCategory}}</view>
-      </view>
-      <view class="season-info">
-        <text class="season-label">适宜时令</text>
-        <text class="season-value">{{dishSeasonText}}</text>
+        <view class="dish-tag">
+          <view class="category-tag">{{dish.dishCategory}}</view>
+          <view class="season-tag">{{dishSeasonText}}</view>
+        </view>
       </view>
       <view class="description" wx:if="{{dish.dishDescription}}">{{dish.dishDescription}}</view>
       <!-- 数量控制 -->

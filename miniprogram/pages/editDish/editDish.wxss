@@ -1,5 +1,9 @@
 /* pages/editDish/editDish.wxss */
 @import "../../styles/edit.wxss";
+.edit-label-right double-picker {
+  width: 100%;
+}
+
 .step-number{
   width:60rpx;
   height:60rpx;

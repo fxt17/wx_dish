@@ -1,0 +1,56 @@
+<view
+  class="double-picker-trigger {{disabled ? 'double-picker-trigger-disabled' : ''}}"
+  bindtap="handleOpen"
+>
+  <slot></slot>
+</view>
+
+<view
+  wx:if="{{pickerVisible}}"
+  class="double-picker-mask custom-mask-class"
+  catchtap="handleMaskTap"
+  catchtouchmove="stopPropagation"
+>
+  <view class="double-picker-panel custom-panel-class" catchtap="stopPropagation">
+    <view class="double-picker-actions custom-actions-class">
+      <view class="double-picker-action double-picker-cancel custom-cancel-class" catchtap="handleCancel">
+        {{cancelText}}
+      </view>
+      <view class="double-picker-title custom-title-class">{{title}}</view>
+      <view class="double-picker-action double-picker-confirm custom-confirm-class" catchtap="handleConfirm">
+        {{confirmText}}
+      </view>
+    </view>
+
+    <view class="double-picker-column-titles custom-column-title-class">
+      <view class="double-picker-column-title">{{leftTitle}}</view>
+      <view class="double-picker-column-title">{{rightTitle}}</view>
+    </view>
+
+    <picker-view
+      class="double-picker-view custom-picker-class"
+      value="{{pickerValue}}"
+      indicator-style="{{indicatorStyle}}"
+      bindchange="handleChange"
+    >
+      <picker-view-column>
+        <view
+          class="double-picker-option custom-option-class"
+          wx:for="{{leftRange}}"
+          wx:key="index"
+        >
+          {{item}}
+        </view>
+      </picker-view-column>
+      <picker-view-column>
+        <view
+          class="double-picker-option custom-option-class"
+          wx:for="{{rightRange}}"
+          wx:key="index"
+        >
+          {{item}}
+        </view>
+      </picker-view-column>
+    </picker-view>
+  </view>
+</view>

@@ -19,7 +19,6 @@ Page({
         ingredientExpireStatus:"normal",
         ingredientExpireText:"剩余25天",
         ingredientCategory:"",
-        // ingredientCategoryLocked:false,
         ingredientCategories:[//下拉食材类别选择
           "蔬菜",
           "肉类",
@@ -169,7 +168,7 @@ Page({
       });
       return
     }
-    let today=dateUtil.formatDate(new Date());
+    const today=dateUtil.formatDate(new Date());
     this.setData({ingredientPurchaseDate:today});//默认购买日期为今天
     let ingredientCategory=options.ingredientCategory;
     if(ingredientCategory=="全部")
