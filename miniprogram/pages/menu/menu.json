@@ -3,6 +3,7 @@
   "usingComponents": {
     "counter": "/components/counter/counter",
     "cart": "/components/cart/cart",
-    "tabBar": "/components/tabBar/tabBar"
+    "tabBar": "/components/tabBar/tabBar",
+    "random-dish-picker": "/components/randomDishPicker/randomDishPicker"
   }
 }

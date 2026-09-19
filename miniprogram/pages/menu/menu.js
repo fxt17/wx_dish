@@ -47,6 +47,31 @@ Page({
     dishUtil.selectDish(app.globalData.dishes,dishId);//更新dishCount
     this.refreshDishes();
   },
+  // 随机结果确认后才合并到购物车；沿用每道菜最多选一份的规则。
+  confirmRandomDishes(e){
+    const dishIds = Array.isArray(e.detail.dishIds) ? e.detail.dishIds : [];
+    const dishes = app.globalData.dishes;
+    const byId = new Map(dishes.map(dish => [String(dish.dishId), dish]));
+    const seen = new Set();
+    let added = 0;
+    let matched = 0;
+    dishIds.forEach(dishId => {
+      const key = String(dishId);
+      if (seen.has(key)) { return; }
+      seen.add(key);
+      const dish = byId.get(key);
+      if (!dish) { return; }
+      matched++;
+      const previousCount = dish.dishCount;
+      dishUtil.selectDish(dishes, dish.dishId);
+      if (dish.dishCount > previousCount) { added++; }
+    });
+    this.refreshDishes();
+    wx.showToast({
+      title: added ? `已加入 ${added} 道菜` : (matched ? "菜品已在购物车中" : "菜品已变更，请重新随机"),
+      icon: "none"
+    });
+  },
   // 减菜
   cancelDish(e){
     let dishId=e.detail.dishId;
@@ -78,7 +103,7 @@ Page({
   // 菜品详情页
   openDetail(e){
     let dishId = e.currentTarget.dataset.dishId;
-    wx.navigateTo({url:"/pages/detail/detail?dishId="+dishId,});
+    wx.navigateTo({url:"/pages/detailDish/detailDish?dishId="+dishId,});
   },
 
   // 清空购物车

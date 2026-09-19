@@ -1,5 +1,6 @@
 // pages/detailIngredient/detailIngredient.js
 const app=getApp();
+const ingredientUtil = require("../../utils/ingredient.js");
 Page({
 
   /**
@@ -13,7 +14,7 @@ Page({
   editIngredient(){
     if(!this.data.ingredient){return;}
     let ingredientId=this.data.ingredient.ingredientId;
-    wx.navigateTo({url:"/pages/addIngredient/addIngredient?ingredientId="+ingredientId});
+    wx.navigateTo({url:"/pages/editIngredient/editIngredient?ingredientId="+ingredientId});
   },
   deleteIngredient(){
     wx.showModal({//提示窗
@@ -24,7 +25,10 @@ Page({
           let ingredientId=this.data.ingredient.ingredientId;
           let ingredients=app.globalData.ingredients;
           let index=ingredients.findIndex(item=>{return item.ingredientId==ingredientId;});
-          if(index!=-1){ingredients.splice(index,1);}
+          if (index !== -1) {
+            ingredients.splice(index, 1);// 删除食材
+            ingredientUtil.syncOrderIngredients();// 同步到缺料清单
+          }
           wx.showToast({title:"食材已删除",icon:"success"});
           setTimeout(()=>{wx.navigateBack();},1000);//返回
       }

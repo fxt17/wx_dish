@@ -26,7 +26,7 @@ Page({
   },
 
   // 新增食材，传递当前类别
-  addIngredient(){wx.navigateTo({url:"/pages/addIngredient/addIngredient?ingredientCategory="+this.data.currentIngredientCategory})},
+  addIngredient(){wx.navigateTo({url:"/pages/editIngredient/editIngredient?ingredientCategory="+this.data.currentIngredientCategory})},
 
   // 搜索食材
   searchIngredient(e){

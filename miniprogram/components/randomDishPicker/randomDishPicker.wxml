@@ -1,0 +1,149 @@
+<view wx:if="{{ready}}"
+  class="dice-button {{pressing ? 'is-pressing' : ''}} {{dragging ? 'is-dragging' : ''}}"
+  style="transform: translate3d({{diceX}}px, {{diceY}}px, 0);"
+  catchtouchstart="handleTouchStart"
+  catchtouchmove="handleTouchMove"
+  catchtouchend="handleTouchEnd"
+  catchtouchcancel="handleTouchCancel"
+  catchtap="stopEvent"
+  aria-role="button"
+  aria-label="随机点菜，按住三秒打开设置，可以拖动位置"
+>
+  <view class="dice-scene">
+    <view class="dice-shadow {{rolling ? 'dice-shadow-rolling' : ''}}" style="animation-duration: {{rollDuration}}ms;"></view>
+    <view class="dice-lift {{rolling ? 'dice-tossing' : ''}}" style="animation-duration: {{rollDuration}}ms;">
+      <view class="dice-perspective">
+        <view
+          id="random-dice-cube"
+          class="dice-cube {{rolling ? 'dice-rolling' : ''}}"
+          style="animation-duration: {{rollDuration}}ms;"
+          data-roll-id="{{rollId}}"
+          bindanimationend="handleRollAnimationEnd"
+        >
+          <!-- 六个面独立定位；相对两面的点数之和为 7。 -->
+          <view class="dice-face dice-front">
+            <view class="pip pip-center pip-one"></view>
+          </view>
+          <view class="dice-face dice-back">
+            <view class="pip pip-top-left"></view>
+            <view class="pip pip-top-right"></view>
+            <view class="pip pip-middle-left"></view>
+            <view class="pip pip-middle-right"></view>
+            <view class="pip pip-bottom-left"></view>
+            <view class="pip pip-bottom-right"></view>
+          </view>
+          <view class="dice-face dice-right">
+            <view class="pip pip-top-left"></view>
+            <view class="pip pip-center"></view>
+            <view class="pip pip-bottom-right"></view>
+          </view>
+          <view class="dice-face dice-left">
+            <view class="pip pip-top-left"></view>
+            <view class="pip pip-top-right"></view>
+            <view class="pip pip-bottom-left"></view>
+            <view class="pip pip-bottom-right"></view>
+          </view>
+          <view class="dice-face dice-top">
+            <view class="pip pip-top-left"></view>
+            <view class="pip pip-bottom-right"></view>
+          </view>
+          <view class="dice-face dice-bottom">
+            <view class="pip pip-top-left"></view>
+            <view class="pip pip-top-right"></view>
+            <view class="pip pip-center"></view>
+            <view class="pip pip-bottom-left"></view>
+            <view class="pip pip-bottom-right"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="hold-ring {{holdComplete ? 'hold-ring-complete' : ''}}" wx:if="{{pressing}}" aria-hidden="true">
+      <view class="hold-ring-track"></view>
+      <view class="hold-ring-half hold-ring-right">
+        <view class="hold-ring-arc" style="animation-duration: {{longPressDuration}}ms;"></view>
+      </view>
+      <view class="hold-ring-half hold-ring-left">
+        <view class="hold-ring-arc" style="animation-duration: {{longPressDuration}}ms;"></view>
+      </view>
+    </view>
+  </view>
+  <view class="dice-caption">{{rolling ? '随机中…' : (pressing ? '按住设置' : '随机点菜')}}</view>
+</view>
+
+<block wx:if="{{modal}}">
+  <view class="dialog-mask" catchtap="closeDialog" catchtouchmove="stopEvent"></view>
+
+  <view wx:if="{{modal === 'settings'}}" class="dialog-panel settings-panel" catchtap="stopEvent">
+    <view class="dialog-heading" catchtouchmove="stopEvent">
+      <text class="eyebrow">RANDOM MENU</text>
+      <text class="dialog-title">今天想怎么吃？</text>
+    </view>
+
+    <view class="season-setting" catchtouchmove="stopEvent">
+      <view class="season-description">
+        <text class="season-title">仅选择当季菜品</text>
+      </view>
+      <switch color="#ed8b26" checked="{{draftSeasonalOnly}}" bindchange="handleSeasonChange" />
+    </view>
+
+    <scroll-view class="dialog-scroll" scroll-y="{{true}}" catchtouchmove="stopEvent">
+      <view class="default-hint" wx:if="{{defaultMode}}">未设置时从全部菜谱随机 1 道。保存下方设置后，按分类抽取。</view>
+      <checkbox-group bindchange="handleCategoriesChange">
+        <view class="category-row {{item.enabled ? 'category-selected' : ''}} {{item.available === 0 ? 'category-unavailable' : ''}}" wx:for="{{draftRows}}" wx:key="category">
+          <label class="category-choice">
+            <checkbox value="{{item.category}}" checked="{{item.enabled}}" disabled="{{item.available === 0}}" color="#ed8b26" />
+            <view class="category-info">
+              <text class="category-name">{{item.category}}</text>
+              <text class="category-available">可选 {{item.available}} 道</text>
+            </view>
+          </label>
+          <view class="quantity-control {{item.enabled ? '' : 'quantity-disabled'}}">
+            <button class="quantity-button {{!item.enabled || item.count <= 1 ? 'quantity-button-disabled' : ''}}" disabled="{{!item.enabled || item.count <= 1}}" data-index="{{index}}" data-delta="-1" bindtap="stepCount" aria-label="减少数量">−</button>
+            <input class="quantity-input" type="number" value="{{item.count}}" disabled="{{!item.enabled || item.available === 0}}" data-index="{{index}}" bindinput="handleCountInput" bindblur="handleCountBlur" aria-label="随机菜品数量" />
+            <button class="quantity-button {{!item.enabled || item.count >= item.available ? 'quantity-button-disabled' : ''}}" disabled="{{!item.enabled || item.count >= item.available}}" data-index="{{index}}" data-delta="1" bindtap="stepCount" aria-label="增加数量">+</button>
+          </view>
+          <text class="quantity-unit">道</text>
+        </view>
+      </checkbox-group>
+      <view class="empty-state" wx:if="{{!draftRows.length}}">暂无菜品分类，请先在分类管理中添加。</view>
+      <view class="scroll-end"></view>
+    </scroll-view>
+
+    <text class="form-error" wx:if="{{formError}}">{{formError}}</text>
+    <view class="dialog-actions" catchtouchmove="stopEvent">
+      <button class="action-button secondary" bindtap="closeDialog">取消</button>
+      <button class="action-button primary" bindtap="saveSettings">保存设置</button>
+    </view>
+  </view>
+
+  <view wx:elif="{{modal === 'result'}}" class="dialog-panel result-panel" style="height: {{resultHeight}}rpx;" catchtap="stopEvent">
+    <view class="dialog-heading" catchtouchmove="stopEvent">
+      <text class="eyebrow">TODAY'S PICKS</text>
+      <text class="dialog-title">{{resultRows.length ? '今天试试这几道' : '暂时没有合适的菜'}}</text>
+      <text class="dialog-subtitle">{{resultSummary}} · 已选 {{resultRows.length}} / {{resultRequested}} 道</text>
+    </view>
+
+    <scroll-view class="dialog-scroll" scroll-y="{{true}}" catchtouchmove="stopEvent">
+      <view class="result-row" wx:for="{{resultRows}}" wx:key="key">
+        <image class="result-image" src="{{item.image}}" mode="aspectFill" data-index="{{index}}" binderror="handleImageError" />
+        <view class="result-info">
+          <view class="result-name-row">
+            <text class="result-name">{{item.name}}</text>
+            <text class="season-badge" wx:if="{{item.inSeason}}">当季</text>
+          </view>
+          <text class="result-category">{{item.category}}</text>
+          <text class="result-season">{{item.season}}</text>
+        </view>
+      </view>
+      <view class="empty-state" wx:if="{{!resultRows.length}}">添加更多菜谱，或调整分类和时令设置后再试试。</view>
+      <view class="result-warning" wx:for="{{resultMessages}}" wx:key="index">{{item}}</view>
+      <view class="scroll-end"></view>
+    </scroll-view>
+
+    <text class="result-tip" catchtouchmove="stopEvent">确认后加入购物车，取消则放弃本次结果</text>
+    <view class="dialog-actions" catchtouchmove="stopEvent">
+      <button class="action-button secondary" bindtap="closeDialog">取消</button>
+      <button class="action-button primary {{resultRows.length ? '' : 'action-button-disabled'}}" disabled="{{!resultRows.length}}" bindtap="confirmResult">确认</button>
+    </view>
+  </view>
+</block>

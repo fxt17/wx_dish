@@ -33,7 +33,7 @@
             <text>⭐ {{item.starRating}}</text>
           </view>
           <!-- 销量 -->
-          <text class="dish-sales">已点 {{item.dishOrderCount}} 份</text>
+          <text class="dish-sales">点过 {{item.dishOrderCount}} 份</text>
         </view>
         <!-- 数量控制 -->
         <view class="dish-counter">
@@ -52,4 +52,7 @@
 
   <!-- 底部导航栏 -->
   <tabBar current="menu"></tabBar>
+
+  <!-- 随机点菜：点击抽取，长按三秒设置，可拖动位置 -->
+  <random-dish-picker dishes="{{dishes}}" categories="{{dishCategories}}" long-press-duration="{{3000}}" bind:confirm="confirmRandomDishes"/>
 </view>

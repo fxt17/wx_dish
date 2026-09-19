@@ -50,8 +50,13 @@ function consumeIngredients(fridge,dishes){
 
   dishes.forEach(dish=>{
     if(dish.dishCount>0){
-      // orderList.push({dishId:dish.dishId,dishImage:dish.dishImage,dishName:dish.dishName,dishCount:dish.dishCount});// 保存订单快照
-      orderList.push({dish});
+      // 保存独立的菜单快照，避免清空点菜数量或修改菜谱影响已提交菜单。
+      orderList.push({
+        dish: {
+          ...dish,
+          dishIngredients: dish.dishIngredients.map(item => ({ ...item }))
+        }
+      });
       dish.dishIngredients.forEach(ingredient=>{
         let needName=ingredient.name;
         let needCount=ingredient.count*dish.dishCount;
@@ -99,4 +104,29 @@ function consumeIngredients(fridge,dishes){
   return {consumeList,shortageList,orderList};
 }
 
-module.exports={updateIngredientExpire,calculateExpireDate, getExpireStatus, consumeIngredients}
+// 库存变动后，重新计算当前菜单的缺料和待消耗清单；不扣除库存。
+function syncOrderIngredients() {
+  const { ingredients, orderList } = app.globalData;
+
+  // 先更新保质状态，过期食材不能计入可用库存。
+  updateIngredientExpire(ingredients);
+
+  const dishes = orderList.map(({ dish }) => ({
+    ...dish,
+    // 兼容旧菜单：旧代码会把数量清零，当前点菜规则每道菜最多一份。
+    dishCount: Number(dish.dishCount) > 0 ? Number(dish.dishCount) : 1
+  }));
+
+  const result = consumeIngredients(ingredients, dishes);
+  app.globalData.orderList = result.orderList;
+  app.globalData.consumeList = result.consumeList;
+  app.globalData.shortageList = result.shortageList;
+}
+
+module.exports = {
+  updateIngredientExpire,
+  calculateExpireDate,
+  getExpireStatus,
+  consumeIngredients,
+  syncOrderIngredients
+};

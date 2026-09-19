@@ -1,4 +1,4 @@
-// pages/addIngredient/addIngredient.js
+// pages/editIngredient/editIngredient.js
 const app=getApp();
 const ingredientUtil=require("../../utils/ingredient.js");
 const dateUtil=require("../../utils/date.js");
@@ -96,7 +96,10 @@ Page({
       ingredient.ingredientExpireStatus=result.status;//得到食材状态
       ingredient.ingredientExpireText=result.text;//得到食材状态对应文本
       let index=app.globalData.ingredients.findIndex(item=>item.ingredientId==this.data.fridgeIngredient.ingredientId);
-      if(index!=-1){app.globalData.ingredients[index]=ingredient;}// 修改全局数据
+      if (index !== -1) {
+        app.globalData.ingredients[index] = ingredient;//修改全局数据
+        ingredientUtil.syncOrderIngredients();//同步到缺料清单
+      }
       wx.showToast({title:"修改成功",icon:"success"});
     }
     else{// 新增食材
