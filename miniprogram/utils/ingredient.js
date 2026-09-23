@@ -1,5 +1,4 @@
 // utils/ingredient.js
-const app=getApp();
 const dateUtil=require("./date.js");
 
 // 冰箱状态更新,得到保质截止期,保质状态,文本(ExpireDate\ExpireStatus\ExpireText)
@@ -104,29 +103,10 @@ function consumeIngredients(fridge,dishes){
   return {consumeList,shortageList,orderList};
 }
 
-// 库存变动后，重新计算当前菜单的缺料和待消耗清单；不扣除库存。
-function syncOrderIngredients() {
-  const { ingredients, orderList } = app.globalData;
-
-  // 先更新保质状态，过期食材不能计入可用库存。
-  updateIngredientExpire(ingredients);
-
-  const dishes = orderList.map(({ dish }) => ({
-    ...dish,
-    // 兼容旧菜单：旧代码会把数量清零，当前点菜规则每道菜最多一份。
-    dishCount: Number(dish.dishCount) > 0 ? Number(dish.dishCount) : 1
-  }));
-
-  const result = consumeIngredients(ingredients, dishes);
-  app.globalData.orderList = result.orderList;
-  app.globalData.consumeList = result.consumeList;
-  app.globalData.shortageList = result.shortageList;
-}
-
 module.exports = {
   updateIngredientExpire,
   calculateExpireDate,
   getExpireStatus,
-  consumeIngredients,
-  syncOrderIngredients
+  // Only used for the pre-submit preview; persisted menu totals come from the server.
+  consumeIngredients
 };

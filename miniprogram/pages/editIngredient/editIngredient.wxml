@@ -1,8 +1,8 @@
 <view class="edit-page">
   <!-- 图片区域 -->
   <view class="edit-image-card">
-    <image class="edit-image" src="{{ingredientImage}}" mode="aspectFill"></image>
-    <button class="edit-image-btn" bindtap="change_ingredientImage">上传图片</button>
+    <image class="edit-image" src="{{ingredientImageUrl || ingredientImage}}" mode="aspectFill"></image>
+    <button disabled="{{saving}}" class="edit-image-btn" bindtap="change_ingredientImage">上传图片</button>
   </view>
   
   <!-- 表单 -->
@@ -11,21 +11,21 @@
     <view class="edit-row">
       <text class="edit-label">食材名称</text>
       <view class="edit-label-right">
-        <input class="edit-input" placeholder="请输入食材名称" placeholder-class="edit-placeholder"  value="{{ingredientName}}" bindinput="change_ingredientName"/>
+        <input disabled="{{saving}}" class="edit-input" placeholder="请输入食材名称" placeholder-class="edit-placeholder"  value="{{ingredientName}}" bindinput="change_ingredientName"/>
       </view>
     </view>
     <!-- 食材数量 -->
     <view class="edit-row">
       <text class="edit-label">数量</text>
       <view class="edit-label-right">
-        <input class="edit-input" type="digit" placeholder="例如：5" placeholder-class="edit-placeholder"  value="{{ingredientCount}}" bindinput="change_ingredientCount"/>
+        <input disabled="{{saving}}" class="edit-input" type="digit" placeholder="例如：5" placeholder-class="edit-placeholder"  value="{{ingredientCount}}" bindinput="change_ingredientCount"/>
       </view>
     </view>
     <!-- 食材单位 -->
     <view class="edit-row">
       <text class="edit-label">单位</text>
       <view class="edit-label-right">
-        <picker mode="selector" range="{{ingredientUnits}}" data-index="{{index}}" bindchange="change_ingredientUnit">
+        <picker disabled="{{saving}}" mode="selector" range="{{ingredientUnits}}" data-index="{{index}}" bindchange="change_ingredientUnit">
           <view class="edit-picker {{ingredientUnit?'':'edit-placeholder'}}">
             {{ingredientUnit || "请选择单位，例如：个、kg、瓶"}}
             <text class="edit-picker-arrow">▼</text>
@@ -37,7 +37,7 @@
     <view class="edit-row">
       <text class="edit-label">类别</text>
       <view class="edit-label-right">
-        <picker mode="selector" range="{{ingredientCategories}}" bindchange="change_ingredientCategory">
+        <picker disabled="{{saving}}" mode="selector" range="{{ingredientCategories}}" bindchange="change_ingredientCategory">
           <view class="edit-picker {{ingredientCategory?'':'edit-placeholder'}}">
             {{ingredientCategory || "请选择类别"}}
             <text class="edit-picker-arrow">▼</text>
@@ -49,7 +49,7 @@
     <view class="edit-row">
       <text class="edit-label">生产日期</text>
       <view class="edit-label-right">
-        <picker mode="date" end="{{ingredientPurchaseDate}}" bindchange="change_ingredientProduceDate">
+        <picker disabled="{{saving}}" mode="date" end="{{ingredientPurchaseDate}}" bindchange="change_ingredientProduceDate">
           <view class="edit-picker {{ingredientProduceDate?'':'edit-placeholder'}}">
             {{ingredientProduceDate || "请选择生产日期"}}
             <text class="edit-picker-arrow">▼</text>
@@ -61,7 +61,7 @@
     <view class="edit-row">
       <text class="edit-label">购买日期</text>
       <view class="edit-label-right">
-        <picker mode="date" start="{{ingredientProduceDate}}" end="{{today}}" bindchange="change_ingredientPurchaseDate">
+        <picker disabled="{{saving}}" mode="date" start="{{ingredientProduceDate}}" end="{{today}}" bindchange="change_ingredientPurchaseDate">
           <view class="edit-picker">
             {{ingredientPurchaseDate || "请选择购买日期"}}
             <text class="edit-picker-arrow">▼</text>
@@ -73,7 +73,7 @@
     <view class="edit-row">
       <text class="edit-label">保质期</text>
       <view class="edit-label-right">
-        <input class="edit-input" type="number" placeholder="请输入保质期" value="{{ingredientShelfLife}}" bindinput="change_ingredientShelfLife"/>
+        <input disabled="{{saving}}" class="edit-input" type="number" placeholder="请输入保质期" value="{{ingredientShelfLife}}" bindinput="change_ingredientShelfLife"/>
         <text class="edit-input-right">天</text>
       </view>
     </view>
@@ -82,8 +82,8 @@
   <!-- 底部操作栏 -->
   <view class="edit-bottom">
     <!-- 扫码 -->
-    <button class="edit-scan-btn" bindtap="scanIngredient">扫码添加</button>
+    <button disabled="{{saving}}" class="edit-scan-btn" bindtap="scanIngredient">扫码添加</button>
     <!-- 保存 -->
-    <button class="edit-save-btn" bindtap="saveIngredient">保存食材</button>
+    <button class="edit-save-btn" loading="{{saving}}" disabled="{{saving}}" bindtap="saveIngredient">保存食材</button>
   </view>
 </view>

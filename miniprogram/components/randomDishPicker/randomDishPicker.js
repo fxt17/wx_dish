@@ -1,8 +1,9 @@
 const randomDishUtil = require("../../utils/randomDish.js");
 const seasonUtil = require("../../utils/season.js");
+const store = require("../../services/kitchenStore");
 
-const SETTINGS_KEY = "miniprogram_random_dish_settings_v1";
-const POSITION_KEY = "miniprogram_random_dish_position_v1";
+const SETTINGS_KEY = "settings";
+const POSITION_KEY = "position";
 const DEFAULT_IMAGE = "/images/myicons/食物.png";
 const MOVE_TOLERANCE = 8; // px，轻微抖动不取消长按。
 const BUTTON_WIDTH = 110; // rpx，与样式一致。
@@ -64,13 +65,16 @@ Component({
       this._inactive = false;
       this._settings = randomDishUtil.normalizeSettings(this.readLocal(SETTINGS_KEY));
       const savedPosition = this.readLocal(POSITION_KEY);
+      this._sharedPosition = JSON.stringify(savedPosition);
       this._position = savedPosition && savedPosition.version === 1
         && Number.isFinite(savedPosition.x) && Number.isFinite(savedPosition.y)
         ? { x: clamp(savedPosition.x, 0, 1), y: clamp(savedPosition.y, 0, 1) }
         : { x: 1, y: 1 };
       this.updateBounds();
+      this._unsubscribeKitchen = store.subscribe(() => this.syncSharedState());
     },
     detached() {
+      if (this._unsubscribeKitchen) this._unsubscribeKitchen();
       this._inactive = true;
       this.cancelGesture(false);
       this.cancelRoll(false);
@@ -96,20 +100,22 @@ Component({
 
   methods: {
     readLocal(key) {
-      try { return wx.getStorageSync(key); }
-      catch (error) {
-        console.warn("读取随机点菜设置失败", error);
-        return null;
-      }
+      return key === SETTINGS_KEY ? getApp().globalData.randomSettings : getApp().globalData.dicePosition;
     },
 
     writeLocal(key, value) {
-      try {
-        wx.setStorageSync(key, value);
-        return true;
-      } catch (error) {
-        console.warn("保存随机点菜设置失败", error);
-        return false;
+      return key === SETTINGS_KEY
+        ? store.perform("random.settings", { settings: value, expectedVersion: this._settingsVersion }, "厨房设置已保存")
+        : store.perform("random.position", { x: value.x, y: value.y });
+    },
+    syncSharedState() {
+      this._settings = randomDishUtil.normalizeSettings(getApp().globalData.randomSettings);
+      const position = getApp().globalData.dicePosition;
+      const marker = JSON.stringify(position);
+      if (!this._gesture && !this._inactive && marker !== this._sharedPosition) {
+        this._sharedPosition = marker;
+        this._position = { x: position.x, y: position.y };
+        this.updateBounds();
       }
     },
 
@@ -155,6 +161,7 @@ Component({
     },
 
     handleTouchStart(e) {
+      if (store.busy || !store.requireKitchen()) return;
       if (this._gesture && this._gesture.completed) { return; }
       this.cancelGesture();
       if (this._inactive || !this.data.ready || this.data.modal || this._rollRun
@@ -286,6 +293,7 @@ Component({
       if (this._inactive || this._rollRun) { return; }
       this.cancelGesture();
       const settings = this._settings;
+      this._settingsVersion = getApp().globalData.randomVersion;
       this.setData({
         modal: "settings", formError: "",
         draftSeasonalOnly: settings.seasonalOnly,
@@ -338,7 +346,8 @@ Component({
       this.refreshDraftRows(this.data.draftRows);
     },
 
-    saveSettings() {
+    async saveSettings() {
+      if (this.data.savingSettings) return;
       // 保存前再次按最新候选数校验，兼容旧缓存和弹窗打开后的菜品变化。
       const draftRows = this.refreshDraftRows(this.data.draftRows);
       const selected = draftRows.filter(row => row.enabled);
@@ -357,10 +366,10 @@ Component({
         seasonalOnly: this.data.draftSeasonalOnly,
         rules: draftRows
       });
-      const saved = this.writeLocal(SETTINGS_KEY, settings);
-      this._settings = settings;
-      this.setData({ modal: "" });
-      wx.showToast({ title: saved ? "设置已保存" : "设置已应用，本机保存失败", icon: "none" });
+      this.setData({ savingSettings: true });
+      const saved = await this.writeLocal(SETTINGS_KEY, settings);
+      this.setData({ savingSettings: false });
+      if (saved) { this._settings = settings; this.setData({ modal: "" }); }
     },
 
     roll() {
@@ -418,7 +427,7 @@ Component({
           key: String(dish.dishId),
           name: dish.dishName,
           category: dish.dishCategory || "未分类",
-          image: dish.dishImage || DEFAULT_IMAGE,
+          image: dish.dishImageUrl || dish.dishImage || DEFAULT_IMAGE,
           season: seasonUtil.formatSeason(dish.dishSeason),
           inSeason: seasonUtil.isInSeason(dish.dishSeason, month)
         })),

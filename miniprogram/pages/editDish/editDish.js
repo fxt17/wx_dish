@@ -1,5 +1,6 @@
 // pages/editDish/editDish.js
 const app=getApp();
+const store = require("../../services/kitchenStore");
 const categoryUtil=require("../../utils/category.js");
 const seasonUtil=require("../../utils/season.js");
 
@@ -55,6 +56,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options){
+    if (!store.requireKitchen()) return;
     const dishId=options.dishId;//接收编辑按键传递的详情页面菜品id
     const isNewDish=!dishId;
     let dish;
@@ -78,6 +80,8 @@ Page({
       dish=createEmptyDish(dishCategory);
     }
 
+    this._baseVersion = dish._version || 0;
+    this._formKey = `dish:${dishId || 'new'}`;
     const dishSeason=seasonUtil.normalizeSeason(dish.dishSeason);
     dish.dishSeason=dishSeason;
     this.setData({
@@ -90,15 +94,27 @@ Page({
       seasonEndYearText:dishSeason.endMonth>=dishSeason.startMonth ? "当年" : "次年"
     });
     wx.setNavigationBarTitle({title:isNewDish?"新增菜谱":"菜品编辑"});
+    const draft = store.readForm(this._formKey);
+    if (draft && draft.dish) wx.showModal({ title: "恢复本机编辑草稿", content: "发现上次未完成保存的内容，是否继续编辑？",
+      success: result => {
+        if (!result.confirm) return;
+        this._baseVersion = draft.expectedVersion;
+        const season = seasonUtil.normalizeSeason(draft.dish.dishSeason);
+        this.setData({ dish: draft.dish, seasonPickerValue: [season.startMonth - 1, season.endMonth - 1],
+          dishSeasonText: seasonUtil.formatSeason(season), seasonEndYearText: season.endMonth >= season.startMonth ? "当年" : "次年" });
+      } });
+
   },
 
   change_dishImage(){//修改菜品图片
     wx.chooseMedia({
      count:1,
      mediaType:["image"],
-     success:(res)=>{
-        let image=res.tempFiles[0].tempFilePath;
-        this.setData({"dish.dishImage":image});
+     success: async res => {
+        try {
+          const image = await store.keepImage(res.tempFiles[0].tempFilePath);
+          this.setData({ "dish.dishImage": image, "dish.dishImageUrl": "" });
+        } catch (error) { wx.showToast({ title: error.message, icon: "none" }); }
       }
     })
   },
@@ -197,7 +213,8 @@ Page({
     this.setData({"dish.dishCookingSteps":steps});
   },
 
-  saveDish(){
+  async saveDish(){
+    if (this._saving || !store.requireKitchen()) return;
     let dish = JSON.parse(JSON.stringify(this.data.dish));
     // =========================
     // 数据校验
@@ -236,21 +253,18 @@ Page({
       ingredient.count = count;
     }
 
-    if(this.data.isNewDish){// 新增菜品
-      dish.dishId=Date.now();
-      app.globalData.dishes.push(dish);
-      wx.showToast({title:"添加成功",icon:"success"});
-    }
-    else{// 保存更新已有菜品的全局数据
-      const index=app.globalData.dishes.findIndex(item=>{return item.dishId==dish.dishId;});
-      if(index===-1){
-        wx.showToast({title:"菜品不存在",icon:"none"});
-        return;
-      }
-      app.globalData.dishes[index]=dish;
-      wx.showToast({title:"修改成功",icon:"success"});
-    }
-    setTimeout(()=>{wx.navigateBack();},1000);//返回详情界面
+    this._saving = true;
+    this.setData({ dish, saving: true });
+    try {
+      store.saveForm(this._formKey, { dish, expectedVersion: this._baseVersion });
+      dish.dishImage = await store.uploadImage(dish.dishImage);
+      this.setData({ "dish.dishImage": dish.dishImage });
+      store.saveForm(this._formKey, { dish, expectedVersion: this._baseVersion });
+      const saved = await store.perform("dish.save", { dish, isNew: this.data.isNewDish, expectedVersion: this._baseVersion }, "菜谱已保存", this._formKey);
+      if (saved) { this._saved = true; store.saveForm(this._formKey, null); wx.navigateBack(); }
+    } catch (error) {
+      wx.showModal({ title: "尚未保存", content: error.message, showCancel: false });
+    } finally { this._saving = false; this.setData({ saving: false }); }
   },
 
   /**
@@ -270,16 +284,17 @@ Page({
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide() {
-
+  onHide() { this.keepDraft(); },
+  keepDraft() {
+    if (!this._formKey || this._saved || !this.data.dish) return;
+    try { store.saveForm(this._formKey, { dish: this.data.dish, expectedVersion: this._baseVersion }); }
+    catch (error) { wx.showToast({ title: "草稿保存失败，请勿关闭", icon: "none" }); }
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload() {
-
-  },
+  onUnload() { this.keepDraft(); },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作

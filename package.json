@@ -1,0 +1,5 @@
+{
+  "name": "family-kitchen-miniprogram",
+  "private": true,
+  "scripts": { "test": "node tests/kitchen-sync.test.js" }
+}

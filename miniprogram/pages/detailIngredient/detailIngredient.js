@@ -1,99 +1,22 @@
-// pages/detailIngredient/detailIngredient.js
-const app=getApp();
-const ingredientUtil = require("../../utils/ingredient.js");
+const app = getApp();
+const store = require("../../services/kitchenStore");
+const sync = require("../../services/pageSync");
 Page({
-
-  /**
-   * 页面的初始数据
-   */
-  data: {
-    ingredient:[],
-    ingredientId:null,
+  data: { ingredient: null, missing: false },
+  onLoad(options) { this.ingredientId = Number(options.ingredientId); },
+  onShow() { sync.attach(this, this.refreshIngredient); },
+  onHide() { sync.detach(this); },
+  onUnload() { sync.detach(this); },
+  refreshIngredient() {
+    const ingredient = app.globalData.ingredients.find(item => item.ingredientId === this.ingredientId);
+    this.setData({ ingredient: ingredient || null, missing: !ingredient });
   },
-
-  editIngredient(){
-    if(!this.data.ingredient){return;}
-    let ingredientId=this.data.ingredient.ingredientId;
-    wx.navigateTo({url:"/pages/editIngredient/editIngredient?ingredientId="+ingredientId});
+  editIngredient() {
+    if (this.data.ingredient && store.requireKitchen()) wx.navigateTo({ url: "/pages/editIngredient/editIngredient?ingredientId=" + this.ingredientId });
   },
-  deleteIngredient(){
-    wx.showModal({//提示窗
-      title:"删除食材",
-      content:"确定删除该食材吗？",
-      success:(res)=>{
-        if(res.confirm){
-          let ingredientId=this.data.ingredient.ingredientId;
-          let ingredients=app.globalData.ingredients;
-          let index=ingredients.findIndex(item=>{return item.ingredientId==ingredientId;});
-          if (index !== -1) {
-            ingredients.splice(index, 1);// 删除食材
-            ingredientUtil.syncOrderIngredients();// 同步到缺料清单
-          }
-          wx.showToast({title:"食材已删除",icon:"success"});
-          setTimeout(()=>{wx.navigateBack();},1000);//返回
-      }
-     }
-    })
-  },
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad(options) {
-    let ingredientId=Number(options.ingredientId);/*找到Id*/
-    this.setData({ingredientId:ingredientId});
-    let ingredient=app.globalData.ingredients.find(item=>{return item.ingredientId==ingredientId;});
-    this.setData({ingredient:ingredient});
-  },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() {
-    let ingredient=app.globalData.ingredients.find(item=>{
-      return item.ingredientId==this.data.ingredientId;
-    });
-    this.setData({ingredient:ingredient});
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh() {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom() {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() {
-
+  async deleteIngredient() {
+    const ingredient = this.data.ingredient;
+    if (!ingredient || !await sync.confirm("删除共享食材", "将删除这批库存，并重新计算家庭菜单的缺料信息。")) return;
+    if (await store.perform("ingredient.delete", { id: ingredient.ingredientId, expectedVersion: ingredient._version }, "食材已删除")) wx.navigateBack();
   }
-})
+});

@@ -1,9 +1,10 @@
 <scroll-view class="detail-scroll" scroll-y="true">
   <!-- 页面容器 -->
-  <view class="detail-page">
+  <view wx:if="{{missing}}" class="detail-card">菜谱已被删除，或尚未加载厨房数据，请返回列表刷新。</view>
+  <view class="detail-page" wx:if="{{dish}}">
     <!-- 顶部图片 -->
     <view class="detail-image-container">
-      <image src="{{dish.dishImage}}" mode="aspectFill"></image>
+      <image src="{{dish.dishImageUrl || dish.dishImage}}" mode="aspectFill"></image>
       <!-- 右上角操作按钮 -->
       <view class="action-buttons">
         <view class="action-btn" bindtap="editDish">

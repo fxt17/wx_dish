@@ -1,8 +1,8 @@
 <view class="edit-page">
   <!-- 图片区域 -->
   <view class="edit-image-card">
-    <image class="edit-image" src="{{dish.dishImage}}" mode="aspectFill"></image>
-    <button class="edit-image-btn" bindtap="change_dishImage">上传图片</button>
+    <image class="edit-image" src="{{dish.dishImageUrl || dish.dishImage}}" mode="aspectFill"></image>
+    <button disabled="{{saving}}" class="edit-image-btn" bindtap="change_dishImage">上传图片</button>
   </view>
 
 
@@ -13,21 +13,21 @@
     <view class="edit-row">
       <text class="edit-label">菜名</text>
       <view class="edit-label-right">
-        <input class="edit-input" placeholder="请输入菜品名称" placeholder-class="edit-placeholder" value="{{dish.dishName}}" bindinput="change_dishName"/>
+        <input disabled="{{saving}}" class="edit-input" placeholder="请输入菜品名称" placeholder-class="edit-placeholder" value="{{dish.dishName}}" bindinput="change_dishName"/>
       </view>
     </view>
     <!-- 菜品描述 -->
     <view class="edit-row">
       <text class="edit-label edit-textarea-label">描述</text>
       <view class="edit-label-right edit-textarea-right">
-        <textarea class="edit-textarea" placeholder="请输入菜品介绍，例如口味、特色..." placeholder-class="edit-placeholder" value="{{dish.dishDescription}}" bindinput="change_dishDescription"></textarea>
+        <textarea disabled="{{saving}}" class="edit-textarea" placeholder="请输入菜品介绍，例如口味、特色..." placeholder-class="edit-placeholder" value="{{dish.dishDescription}}" bindinput="change_dishDescription"></textarea>
       </view>
     </view>
     <!-- 菜品分类 -->
     <view class="edit-row">
       <text class="edit-label">分类</text>
       <view class="edit-label-right">
-        <picker mode="selector" range="{{dishCategories}}" bindchange="change_dishCategory">
+        <picker disabled="{{saving}}" mode="selector" range="{{dishCategories}}" bindchange="change_dishCategory">
           <view class="edit-picker {{dish.dishCategory?'':'edit-placeholder'}}">
             {{dish.dishCategory || "请选择类别"}}
             <text class="edit-picker-arrow">▼</text>
@@ -39,7 +39,7 @@
     <view class="edit-row">
       <text class="edit-label">时令</text>
       <view class="edit-label-right">
-        <double-picker title="选择适宜时令" left-title="当年" right-title="{{seasonEndYearText}}" left-range="{{seasonMonthRanges[0]}}" right-range="{{seasonMonthRanges[1]}}" value="{{seasonPickerValue}}" bind:columnchange="preview_dishSeason" bind:change="change_dishSeason" bind:cancel="reset_dishSeasonPreview">
+        <double-picker disabled="{{saving}}" title="选择适宜时令" left-title="当年" right-title="{{seasonEndYearText}}" left-range="{{seasonMonthRanges[0]}}" right-range="{{seasonMonthRanges[1]}}" value="{{seasonPickerValue}}" bind:columnchange="preview_dishSeason" bind:change="change_dishSeason" bind:cancel="reset_dishSeasonPreview">
           <view class="edit-picker">
             {{dishSeasonText}}
             <text class="edit-picker-arrow">▼</text>
@@ -54,10 +54,10 @@
   <view class="edit-card">
     <view class="edit-title">所需食材</view>
     <view class="edit-row" wx:for="{{dish.dishIngredients}}" wx:key="index">
-      <input class="edit-input ingredient-name" placeholder="请输入食材名称" placeholder-class="edit-placeholder" value="{{item.name}}" data-index="{{index}}" bindinput="change_dishIngredientName"/>
-      <input class="edit-input ingredient-count" type="digit" placeholder="食材数量" placeholder-class="edit-placeholder" value="{{item.count}}" data-index="{{index}}" bindinput="change_dishIngredientCount"/>
+      <input disabled="{{saving}}" class="edit-input ingredient-name" placeholder="请输入食材名称" placeholder-class="edit-placeholder" value="{{item.name}}" data-index="{{index}}" bindinput="change_dishIngredientName"/>
+      <input disabled="{{saving}}" class="edit-input ingredient-count" type="digit" placeholder="食材数量" placeholder-class="edit-placeholder" value="{{item.count}}" data-index="{{index}}" bindinput="change_dishIngredientCount"/>
       <view class="ingredient-unit">
-        <picker mode="selector" range="{{ingredientUnits}}" data-index="{{index}}" bindchange="change_dishIngredientUnit">
+        <picker disabled="{{saving}}" mode="selector" range="{{ingredientUnits}}" data-index="{{index}}" bindchange="change_dishIngredientUnit">
           <view class="edit-picker {{item.unit?'':'edit-placeholder'}}">
             {{item.unit || "单位"}}
             <text class="edit-picker-arrow">▼</text>
@@ -65,10 +65,10 @@
         </picker>
       </view>
       <view class="delete-wrapper">
-        <button class="delete" data-index="{{index}}" bindtap="delete_dishIngredient">×</button>
+        <button disabled="{{saving}}" class="delete" data-index="{{index}}" bindtap="delete_dishIngredient">×</button>
       </view>
     </view>
-    <button class="edit-btn" bindtap="add_dishIngredient">+ 添加食材</button>
+    <button disabled="{{saving}}" class="edit-btn" bindtap="add_dishIngredient">+ 添加食材</button>
   </view>
 
 
@@ -77,16 +77,16 @@
     <view class="edit-title">烹饪流程</view>
     <view class="edit-row" wx:for="{{dish.dishCookingSteps}}" wx:key="index">
         <view class="step-number">{{index+1}}</view>
-        <textarea class="edit-textarea" value="{{item}}" data-index="{{index}}" bindinput="change_dishStep"/>
+        <textarea disabled="{{saving}}" class="edit-textarea" value="{{item}}" data-index="{{index}}" bindinput="change_dishStep"/>
         <view class="delete-wrapper">
-          <button class="delete" data-index="{{index}}" bindtap="delete_dishStep">×</button>
+          <button disabled="{{saving}}" class="delete" data-index="{{index}}" bindtap="delete_dishStep">×</button>
         </view>
     </view>
-    <button class="edit-btn" bindtap="add_dishStep">+ 添加步骤</button>
+    <button disabled="{{saving}}" class="edit-btn" bindtap="add_dishStep">+ 添加步骤</button>
   </view>
 
   <!-- 底部操作栏 -->
   <view class="edit-bottom">
-    <button class="edit-save-btn" bindtap="saveDish">{{isNewDish?"创建菜谱":"保存修改"}}</button>
+    <button class="edit-save-btn" loading="{{saving}}" disabled="{{saving}}" bindtap="saveDish">{{isNewDish?"创建菜谱":"保存修改"}}</button>
   </view>
 </view>

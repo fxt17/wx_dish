@@ -1,5 +1,6 @@
 // pages/categoriesManagement/categoriesManagement.js
 const categoryUtil = require("../../utils/category.js");
+const store = require("../../services/kitchenStore");
 let autoScrollTimer = null;
 let autoScrollDirection = 0;
 let autoScrollTarget = 0;
@@ -576,6 +577,10 @@ Page({
           });
           return;
         }
+        if (newName !== oldName && this.data.categories.includes(newName)) {
+          wx.showToast({ title: "该分类已存在", icon: "none" }); return;
+        }
+        if (newName !== oldName) this._renames.push({ from: oldName, to: newName });
         const categories = [...this.data.categories];
         categories[index] = newName;
         this.setData({categories:categories});
@@ -638,6 +643,9 @@ Page({
   // 页面加载
   // =========================================================
   onLoad(options) {
+    if (!store.requireKitchen()) return;
+    this._renames = [];
+    this._baseVersion = getApp().globalData.categoryVersions[options.type];
     const systemInfo = wx.getWindowInfo();
     this.setData({windowHeight:systemInfo.windowHeight});
     const type = options.type;
@@ -647,17 +655,47 @@ Page({
     else if(type==="ingredient"){
       this.setData({categoryType:type, categories:[...categoryUtil.ingredientCategories]});
     }
+    this._original = JSON.stringify(this.data.categories);
+    const draft = store.readForm("categories:" + type);
+    if (draft) wx.showModal({ title: "恢复分类草稿", content: "是否恢复上次未完成保存的分类修改？",
+      success: result => {
+        if (result.confirm) {
+          this._baseVersion = draft.expectedVersion; this._renames = draft.renames || [];
+          this.setData({ categories: draft.categories }, () => this.updateMaxScrollTop());
+        }
+      } });
   },
 
   // 保存当前分类顺序及增删改结果。原生导航栏返回会触发 onUnload。
-  saveCategories() {
+  async saveCategories() {
     const {categoryType, categories} = this.data;
-    if (!categoryType) {return;}
-
-    const saved = categoryUtil.saveCategories(categoryType, categories);
-    if (!saved) {
-      console.error("分类保存失败:", categoryType, categories);
-    }
+    if (!categoryType || this._saving || this.data.dragging || JSON.stringify(categories) === this._original) return;
+    this.saveDraft();
+    this._saving = true;
+    const savedCategories = [...categories], renameCount = this._renames.length;
+    try {
+      const saved = await categoryUtil.saveCategories(categoryType, savedCategories, this._baseVersion, [...this._renames]);
+      if (saved) {
+        this._original = JSON.stringify(savedCategories);
+        this._baseVersion = getApp().globalData.categoryVersions[categoryType];
+        this._renames.splice(0, renameCount);
+        // The user may continue editing while the first request is in flight.
+        // Keep those later edits with the new base version instead of clearing them.
+        if (JSON.stringify(this.data.categories) !== this._original) this.saveDraft();
+      }
+      if (saved && this._unloading && JSON.stringify(this.data.categories) !== this._original) {
+        this._saving = false;
+        await this.saveCategories();
+      }
+    } finally { this._saving = false; }
+  },
+  saveDraft() {
+    if (!this.data.categoryType || JSON.stringify(this.data.categories) === this._original) return;
+    try {
+      store.saveForm("categories:" + this.data.categoryType, {
+        categories: this.data.categories, expectedVersion: this._baseVersion, renames: this._renames
+      });
+    } catch (error) { wx.showToast({ title: "分类草稿保存失败，请勿关闭", icon: "none" }); }
   },
 
   // =========================================================
@@ -669,9 +707,10 @@ Page({
 
   onShow() {},
 
-  onHide() {},
+  onHide() { this.saveDraft(); },
 
   onUnload() {
+    this._unloading = true;
     this.cancelLongPress(false);
     this.stopAutoScroll();
     this.saveCategories();

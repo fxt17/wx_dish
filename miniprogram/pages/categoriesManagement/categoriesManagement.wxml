@@ -24,6 +24,7 @@
       <image class="add-icon" src="/images/myicons/plus.png" mode="aspectFill"/>
       <view class="category-name">新建分类</view>
     </view>
+    <button class="list-category-item new-category" bindtap="saveCategories">保存到家庭厨房</button>
     <view class="list-scroll-bottom-space" id="categoryContentEnd"></view>
   </scroll-view>
   <!-- 拖拽到列表边界时的视觉提示 -->

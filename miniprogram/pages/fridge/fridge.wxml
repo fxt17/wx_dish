@@ -20,8 +20,9 @@
     </scroll-view>
     <!-- 右侧食材 -->
     <scroll-view class="list-content" scroll-y="true" enable-flex="true">
+      <view class="list-empty" wx:if="{{!ingredients.length}}">{{kitchenReady ? '冰箱还是空的，请先添加分类和食材' : '请前往“我的”登录并创建或加入厨房'}}</view>
       <view class="list-content-item" wx:for="{{showIngredients}}" wx:key="ingredientId" bindtap="openIngredientDetail" data-ingredient-id="{{item.ingredientId}}">
-        <image class="list-content-image" src="{{item.ingredientImage}}" mode="aspectFill"></image>
+        <image class="list-content-image" src="{{item.ingredientImageUrl || item.ingredientImage}}" mode="aspectFill"></image>
         <view class="list-content-message">
           <!-- 食材名称 -->
           <text class="ingredient-name">{{item.ingredientName}}</text>

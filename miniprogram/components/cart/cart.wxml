@@ -22,7 +22,7 @@
   <scroll-view class="cart-list" scroll-y="true">
     <view wx:for="{{dishes}}" wx:key="dishId">
       <view class="dish-item" wx:if="{{item.dishCount>0}}">
-        <image class="dish-image" src="{{item.dishImage}}" mode="aspectFill"></image>
+        <image class="dish-image" src="{{item.dishImageUrl || item.dishImage}}" mode="aspectFill"></image>
         <view class="dish-info">
           <text class="dish-name">{{item.dishName}}</text>
           <counter dishId="{{item.dishId}}" dishCount="{{item.dishCount}}" bind:plus="selectDish" bind:minus="cancelDish"/>

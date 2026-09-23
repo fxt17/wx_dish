@@ -65,7 +65,7 @@
   <scroll-view class="cart-list" scroll-y="true">
     <view wx:for="{{orderList}}" wx:key="dishId">
       <view class="dish-item">
-        <image class="dish-image" src="{{item.dish.dishImage}}" mode="aspectFill"></image>
+        <image class="dish-image" src="{{item.dish.dishImageUrl || item.dish.dishImage}}" mode="aspectFill"></image>
         <view class="dish-info">
           <text class="dish-name">{{item.dish.dishName}}</text>
           <text class="clear" data-dish-id="{{item.dish.dishId}}" bindtap="deleteDish">删除</text>

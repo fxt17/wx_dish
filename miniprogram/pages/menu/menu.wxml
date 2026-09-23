@@ -21,10 +21,11 @@
     </scroll-view>
       <!-- 右侧菜品 -->
     <scroll-view class="list-content" scroll-y="true" enable-flex="true">
+      <view class="list-empty" wx:if="{{!dishes.length}}">{{kitchenReady ? '厨房还没有菜谱，请先添加分类和菜谱' : '请前往“我的”登录并创建或加入厨房'}}</view>
       <view class="list-content-item {{item.isInSeason?'in-season':''}}" wx:for="{{showDishes}}" wx:key="dishId" bindtap="openDetail" data-dish-id="{{item.dishId}}">
         <!-- 卡片右上角当季标记 -->
         <text class="in-season-badge" wx:if="{{item.isInSeason}}">当季</text>
-        <image class="list-content-image" src="{{item.dishImage}}" mode="aspectFill"></image>
+        <image class="list-content-image" src="{{item.dishImageUrl || item.dishImage}}" mode="aspectFill"></image>
         <view class="list-content-message">
           <!-- 菜名 -->
           <text class="dish-name">{{item.dishName}}</text>
@@ -54,5 +55,5 @@
   <tabBar current="menu"></tabBar>
 
   <!-- 随机点菜：点击抽取，长按三秒设置，可拖动位置 -->
-  <random-dish-picker dishes="{{dishes}}" categories="{{dishCategories}}" long-press-duration="{{3000}}" bind:confirm="confirmRandomDishes"/>
+  <random-dish-picker wx:if="{{kitchenReady}}" dishes="{{dishes}}" categories="{{dishCategories}}" long-press-duration="{{3000}}" bind:confirm="confirmRandomDishes"/>
 </view>

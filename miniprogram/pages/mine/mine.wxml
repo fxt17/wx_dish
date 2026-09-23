@@ -1,2 +1,82 @@
-  <!-- 底部导航栏 -->
-  <tabBar current="mine"></tabBar>
+<view class="mine-page">
+  <!-- 未登录 -->
+  <view class="login-page" wx:if="{{!user}}">
+    <view class="login-content">
+      <!-- 标题 -->
+      <view class="login-title">欢迎来到我的厨房</view>
+      <view class="login-desc">和家人一起管理菜谱、库存和购物清单</view>
+      <!-- 登录身份展示 -->
+      <view class="login-user">
+        <view class="avatar-wrapper">
+          <image class="login-avatar" src="/images/myicons/user.png" mode="aspectFill"/>
+        </view>
+        <view class="login-nickname">微信账号</view>
+        <view class="last-login-tip">使用当前微信身份登录</view>
+      </view>
+      <!-- 微信登录 -->
+      <button class="wechat-login-btn" loading="{{busy}}" disabled="{{busy}}" bindtap="login">
+        {{busy ? '正在登录…' : '微信快捷登录'}}
+      </button>
+      <!-- 用户协议 -->
+      <view class="login-agreement">
+        登录即表示同意
+        <text class="agreement-link">《用户协议》</text>
+        和
+        <text class="agreement-link">《隐私政策》</text>
+      </view>
+    </view>
+  </view>
+  <!-- 已登录 -->
+  <block wx:else>
+    <view class="user-header">
+      <image class="avatar" src="{{user.avatar || '/images/myicons/user.png'}}" mode="aspectFill"/>
+      <view class="user-info">
+        <view class="nickname">{{user.nickname}}</view>
+        <view class="user-desc">
+          {{kitchen ? kitchen.name : '还没有加入厨房'}}
+        </view>
+      </view>
+    </view>
+    <!-- 厨房 -->
+    <view class="menu-card">
+      <view class="menu-item" bindtap="openKitchen">
+        <text class="menu-icon">🏠</text>
+        <text class="menu-title">我的厨房</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" wx:if="{{kitchen}}" bindtap="openMembers">
+        <text class="menu-icon">👥</text>
+        <text class="menu-title">厨房成员</text>
+        <text class="menu-extra">{{kitchen.members.length}} 人</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" wx:if="{{kitchen && kitchen.isOwner}}" bindtap="openInvite">
+        <text class="menu-icon">🔗</text>
+        <text class="menu-title">邀请家人</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+    <!-- 系统 -->
+    <view class="menu-card">
+      <view class="menu-item" bindtap="openSync">
+        <text class="menu-icon">☁️</text>
+        <text class="menu-title">数据同步</text>
+        <text class="menu-extra">{{status}}</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="openSettings">
+        <text class="menu-icon">⚙️</text>
+        <text class="menu-title">设置</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      <view class="menu-item" bindtap="openAbout">
+        <text class="menu-icon">❓</text>
+        <text class="menu-title">关于</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+    <button class="logout-btn" disabled="{{busy}}" bindtap="logout">退出登录</button>
+
+  </block>
+  <tabBar current="mine"/>
+</view>

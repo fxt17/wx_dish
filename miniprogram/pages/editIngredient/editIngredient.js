@@ -1,6 +1,6 @@
 // pages/editIngredient/editIngredient.js
 const app=getApp();
-const ingredientUtil=require("../../utils/ingredient.js");
+const store = require("../../services/kitchenStore");
 const dateUtil=require("../../utils/date.js");
 const categoryUtil=require("../../utils/category.js");
 Page({
@@ -17,16 +17,9 @@ Page({
         ingredientPurchaseDate:"",
         ingredientShelfLife:"",//保质期
         ingredientExpireStatus:"normal",
-        ingredientExpireText:"剩余25天",
+        ingredientExpireText:"",
         ingredientCategory:"",
-        ingredientCategories:[//下拉食材类别选择
-          "蔬菜",
-          "肉类",
-          "水果",
-          "蛋奶",
-          "酒水",
-          "其他"
-        ],
+        ingredientCategories:[],
         fridgeIngredient:[]    
   },
   
@@ -34,7 +27,10 @@ Page({
     wx.chooseMedia({
      count:1,
      mediaType:["image"],
-     success:(res)=>{this.setData({ingredientImage:res.tempFiles[0].tempFilePath})}
+     success: async res => {
+       try { this.setData({ ingredientImage: await store.keepImage(res.tempFiles[0].tempFilePath), ingredientImageUrl: "" }); }
+       catch (error) { wx.showToast({ title: error.message, icon: "none" }); }
+     }
     })
   },
   change_ingredientName(e){this.setData({ingredientName:e.detail.value.trim()})},//食材名称
@@ -50,7 +46,8 @@ Page({
   change_ingredientShelfLife(e){this.setData({ingredientShelfLife:e.detail.value})},//食材保质期
   change_ingredientProduceDate(e){this.setData({ingredientProduceDate:e.detail.value});},//食材生产日期
   change_ingredientPurchaseDate(e){this.setData({ingredientPurchaseDate:e.detail.value})},//食材购买日期
-  saveIngredient(){//保存
+  async saveIngredient(){//保存
+    if (this._saving || !store.requireKitchen()) return;
     //=========================
     // 数据校验
     //=========================
@@ -87,79 +84,42 @@ Page({
       ingredientShelfLife:Number(this.data.ingredientShelfLife),//保质期
       ingredientCategory:this.data.ingredientCategory,
     };
-    ingredient.ingredientExpireDate=ingredientUtil.calculateExpireDate(ingredient);//过期日期
-    // let result=ingredientUtil.getExpireStatus(ingredient.ingredientExpireDate);
-    // ingredient.ingredientExpireStatus=result.status;
-    // ingredient.ingredientExpireText=result.text;
-    if(this.data.fridgeIngredient.ingredientId){// 保存修改,同步已有食材
-      let result=ingredientUtil.getExpireStatus(ingredient.ingredientExpireDate);
-      ingredient.ingredientExpireStatus=result.status;//得到食材状态
-      ingredient.ingredientExpireText=result.text;//得到食材状态对应文本
-      let index=app.globalData.ingredients.findIndex(item=>item.ingredientId==this.data.fridgeIngredient.ingredientId);
-      if (index !== -1) {
-        app.globalData.ingredients[index] = ingredient;//修改全局数据
-        ingredientUtil.syncOrderIngredients();//同步到缺料清单
-      }
-      wx.showToast({title:"修改成功",icon:"success"});
-    }
-    else{// 新增食材
-      app.globalData.ingredients.push(ingredient);
-
-      let consumeList=app.globalData.consumeList;
-      let shortageList=app.globalData.shortageList;
-      let shortageIngredient=shortageList.find(item=>ingredient.ingredientName===item.name&&ingredient.ingredientUnit===item.unit);// 入库食材是否是缺少的食材
-      let consumeIngredient=consumeList.find(item=>ingredient.ingredientName===item.name&&ingredient.ingredientUnit===item.unit);// 消耗列表中的对应食材
-      if(!shortageIngredient) {//不缺货直接返回详情界面;
-        wx.showToast({title:"添加成功",icon:"success"});
-        setTimeout(()=>{wx.navigateBack();},1000);
-        return;
-      }
-      if(ingredient.ingredientCount>=shortageIngredient.count){//入库大于缺少
-        if(consumeIngredient)
-          consumeIngredient.count+=shortageIngredient.count;// 更新消耗的食材数量
-        else
-          consumeList.push({name:shortageIngredient.name,count:shortageIngredient.count,unit:shortageIngredient.unit});
-        let shortageIndex=shortageList.indexOf(shortageIngredient);// 删除对应的缺失食材条目
-        shortageList.splice(shortageIndex,1);
-      }
-      else{// 入库小于缺少
-        shortageIngredient.count-=ingredient.ingredientCount;// 更新缺少的食材数量
-        if(consumeIngredient)
-          consumeIngredient.count+=ingredient.ingredientCount;// 更新消耗的食材数量
-        else
-          consumeList.push({name:shortageIngredient.name,count:ingredient.ingredientCount,unit:shortageIngredient.unit});
-      }
-      wx.showToast({title:"添加成功",icon:"success"});
-    }
-    setTimeout(()=>{wx.navigateBack();},1000);//返回详情界面
+    const expectedVersion = this.data.fridgeIngredient._version || 0;
+    const isNew = !this.data.fridgeIngredient.ingredientId;
+    this._saving = true; this.setData({ saving: true });
+    try {
+      store.saveForm(this._formKey, { form: this.data });
+      ingredient.ingredientImage = await store.uploadImage(ingredient.ingredientImage);
+      this.setData({ ingredientImage: ingredient.ingredientImage });
+      store.saveForm(this._formKey, { form: this.data });
+      const saved = await store.perform("ingredient.save", { ingredient, expectedVersion, isNew }, "食材已保存", this._formKey);
+      if (saved) { this._saved = true; store.saveForm(this._formKey, null); wx.navigateBack(); }
+    } catch (error) {
+      wx.showModal({ title: "尚未保存", content: error.message, showCancel: false });
+    } finally { this._saving = false; this.setData({ saving: false }); }
   },
-  scanIngredient(){
-    wx.scanCode({
-      onlyFromCamera:true,
-      scanType:["barCode","qrCode"],
-      success:(res)=>{
-        console.log("扫描结果:",res);
-        let code=res.result;
-        wx.showLoading({title:"查询商品..."});
-        this.searchIngredient(code);
-      },
-      fail(err){console.log("扫描失败",err);}
-    });
+  scanIngredient() {
+    wx.showToast({ title: "扫码识别尚未接入，请手动填写", icon: "none" });
   },
 
    /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {//加载页面时传递类别
+    if (!store.requireKitchen()) return;
+    this._formKey = `ingredient:${options.ingredientId || 'new'}`;
     this.setData({
+      today: dateUtil.formatDate(new Date()),
       ingredientUnits:categoryUtil.ingredientUnits,
       ingredientCategories:[...categoryUtil.ingredientCategories]
     });
     const ingredientId = options.ingredientId;
     if(ingredientId){//对已有食材进行编辑
       const fridgeIngredient=app.globalData.ingredients.find(item=>{return item.ingredientId==ingredientId;});//根据食材id查找对应的食材
+      if (!fridgeIngredient) { wx.showToast({ title: '食材已被删除', icon: 'none' }); wx.navigateBack(); return; }
       this.setData({//同步数据
         ingredientImage:fridgeIngredient.ingredientImage,//图片
+        ingredientImageUrl:fridgeIngredient.ingredientImageUrl || '',
         ingredientName:fridgeIngredient.ingredientName,//名称
         ingredientCount:fridgeIngredient.ingredientCount,//数量
         ingredientUnit:fridgeIngredient.ingredientUnit,//单位
@@ -169,19 +129,27 @@ Page({
         ingredientShelfLife:fridgeIngredient.ingredientShelfLife,//保质期
         fridgeIngredient:fridgeIngredient
       });
+      this.restoreForm();
       return
     }
     const today=dateUtil.formatDate(new Date());
     this.setData({ingredientPurchaseDate:today});//默认购买日期为今天
-    let ingredientCategory=options.ingredientCategory;
+    let ingredientCategory=decodeURIComponent(options.ingredientCategory || '');
     if(ingredientCategory=="全部")
       ingredientCategory="";
     this.setData({ingredientCategory:ingredientCategory});
+    this.restoreForm();
   },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
    */
+  restoreForm() {
+    const draft = store.readForm(this._formKey);
+    if (draft && draft.form) wx.showModal({ title: "恢复本机编辑草稿", content: "发现上次未完成保存的内容，是否继续编辑？",
+      success: result => { if (result.confirm) this.setData({ ...draft.form, saving: false,
+        ingredientUnits: categoryUtil.ingredientUnits, ingredientCategories: [...categoryUtil.ingredientCategories] }); } });
+  },
   onReady() {
 
   },
@@ -196,16 +164,17 @@ Page({
   /**
    * 生命周期函数--监听页面隐藏
    */
-  onHide() {
-
+  onHide() { this.keepDraft(); },
+  keepDraft() {
+    if (!this._formKey || this._saved) return;
+    try { store.saveForm(this._formKey, { form: this.data }); }
+    catch (error) { wx.showToast({ title: "草稿保存失败，请勿关闭", icon: "none" }); }
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
-  onUnload() {
-
-  },
+  onUnload() { this.keepDraft(); },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作

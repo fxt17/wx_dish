@@ -112,7 +112,7 @@
     <text class="form-error" wx:if="{{formError}}">{{formError}}</text>
     <view class="dialog-actions" catchtouchmove="stopEvent">
       <button class="action-button secondary" bindtap="closeDialog">取消</button>
-      <button class="action-button primary" bindtap="saveSettings">保存设置</button>
+      <button class="action-button primary" loading="{{savingSettings}}" disabled="{{savingSettings}}" bindtap="saveSettings">保存设置</button>
     </view>
   </view>
 
